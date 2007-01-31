@@ -1,0 +1,153 @@
+#! /usr/bin/lua
+
+prog = {
+  name = "mkwikletdist",
+  banner = "mkwikletdist by Reuben Thomas (rrt@sc3d.org)",
+  purpose = "Make a distribution tarball from the current Wiklet files",
+  notes = "Since Wiklet changes fairly rapidly, and as most of the" ..
+    "changes are general improvements and fixes, it seems sensible " ..
+    "to make the distribution mostly from the live files, rather " ..
+    "than try to keep default versions and separate out my " ..
+    "customisations."
+}
+
+
+require "std"
+
+
+-- Configuration
+
+progname = "wiklet"
+progdir = "/home/rrt/Software/" .. progname
+webdir = "/home/rrt/public_html"
+version = string.chomp (io.input (webdir .. "/text/Wiklet_Version"):read ("*a"))
+prognameversion = progname .. "-" .. version
+tmpdir = "/tmp"
+archive = prognameversion .. ".tar.gz"
+
+-- Each file to copy is either file-name or {src-path, dest-file}
+files = {
+  {"",
+    {
+      {progdir .. "/" .. "README", "README"},
+    },
+  },
+  {"cgi-bin",
+    {"Wiklet.pm",
+      {progdir .. "/" .. "wiki.pl", "wiki.pl"},
+    }
+  },
+  {"cgi-bin/RRT",
+    {"Misc.pm"},
+  },
+  {"text",
+    {"About_Wiklet", "Getting_Wiklet", "Home_Page",
+      "Pretty_Wiklet_URLs", "Qwik_Start", "Wiki",
+      "Wiki_Contribution", "Wiklet", "Wiklet_Acknowledgements",
+      "Wiklet_Actions", "Wiklet_CVS", "Wiklet_Configuration",
+      "Wiklet_Customization", "Wiklet_FAQ", "Wiklet_Installation",
+      "Wiklet_Licence", "Wiklet_Macros", "Wiklet_Navigation",
+      "Wiklet_Organisation", "Wiklet_Templates",
+      "Wiklet_Text_Formatting", "Wiklet_ToDo", "Wiklet_Use",
+      "Wiklet_Version",
+      {progdir .. "/" .. "Licence", "Licence"},
+    }
+  },
+  {"template",
+    {"abort.htm", "edit.htm", "nav.htm", "search.htm", "view.htm",
+      "found.txt", "foundpage.txt", "newpage.txt", "noaction.txt",
+      "nocvs.txt", "nofile.txt", "nomacro.txt", "pageexists.txt",
+      "pagemoved.txt", "readonly.txt",
+      {progdir .. "/" .. "menu.htm", "menu.htm"},
+      {progdir .. "/" .. "style.css", "style.css"},
+    }
+  },
+}
+
+
+-- Main program
+
+-- Copy a file
+--   from: src-name or {src-path, dest-file}
+--   to: dest-directory
+function copy(from, to)
+  if type (from) == "table" then
+    from, to = from[1], to .. "/" .. from[2]
+  else
+    from, to = webdir .. "/" .. to .. "/" .. from, to .. "/" .. from
+  end
+  text = io.input (from):read ("*a")
+  io.stdin:close ()
+
+  -- Nasty special case to put version in README
+  if to == "/README" then
+    text = string.gsub (text, "$version", version)
+  end
+
+  io.output (destdir .. "/" .. to):write (text)
+  io.close ()
+end
+
+-- Assemble the files required
+destdir = tmpdir .. "/" .. prognameversion
+os.execute ("rm -rf " .. destdir)
+os.execute ("rm -f " .. webdir .. "/download/software/" .. archive)
+os.execute ("mkdir " .. destdir)
+for i = 1, table.getn (files) do
+  local dir, file = files[i][1], files[i][2]
+  if dir ~= "" then
+    os.execute ("mkdir " .. destdir .. "/" .. dir)
+  end
+  for j = 1, table.getn (file) do
+    copy (file[j], dir)
+  end
+end
+
+-- Make the archive
+os.execute ("cd " .. tmpdir .. "; tar zcf " .. webdir .. 
+            "/download/software/" .. archive .. " " .. prognameversion)
+
+
+-- Changelog
+
+-- 21dec04 Rename Wiklet_License to Wiklet_Licence.
+--         Add Licence.
+-- 20dec04 Add nocvs.txt to file list.
+-- 18nov04 Get rid of text substitution; we now use CSS.
+--         Add a default style.css.
+--         Add pageexists.txt and pagemoved.txt.
+--         Get version for .tar.gz and README from page
+--         Wiklet_Version. 
+-- 19may04 Change templates to .txt from .htm
+-- 17may04 Rename and remove various files
+--         Get rid of version number from this script
+-- 15may04 Remove changes.htm which is no longer needed
+-- 21mar04 Added Wiklet_Acknowledgements
+--         Having changed "Reuben Thomas" to "$homepage" in the
+--         templates, no longer need to search and replace it
+-- 19mar04 Copy default wiki.pl, not the live one
+--         Change my name to "My Name" in the templates
+--         Make a tarball rather than a zip file to preserve
+--         permissions
+-- 18mar04 Add Wiklet CVS page
+--         Change __20_ to _ in accordance with new escaping
+--         scheme
+-- 16mar04 Switch from VCS::Lite to CVS with VCS::Cvs
+--         Don't need wikletrmhist any more
+--         Fix removal of zipfile before building it
+-- 19jan04 Added Algorithm::Diff to distribution
+--         Don't add installation instructions to README any
+--         more
+-- 24sep03 Updated to match stdlib
+-- 12sep03 Updated for Lua 5
+-- 22may03 Renamed nopage.txt to newpage.txt
+-- 08mar03 Added storable2pickle
+-- 28feb03 Added Wiklet ToDo page
+-- 19feb03 Added extra Perl modules to file list
+--         Escaped spaces in Wiki page names
+--         Write zip file to download/software
+-- 19jan03 Installation instructions added to README
+--         List of Wiki pages updated
+--         Stopped "0" being appended to each file as it is
+--         written out
+-- 14dec02 Program first written

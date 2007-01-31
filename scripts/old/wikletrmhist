@@ -1,0 +1,17 @@
+#! /usr/bin/perl -w
+# Remove the history of a Wiklet page, using the given revision
+# RRT 28/2/03
+
+use warnings;
+
+use Storable qw(retrieve nstore);
+use lib "/home/rrt/public_html/cgi-bin";
+use RRT::RevHistory;
+
+$rev = shift;                   # revision to keep; should default to $ohist->current
+
+foreach my $file(@ARGV) {
+  my $ohist = retrieve($file);
+  my $nhist = RRT::RevHistory->new($ohist->get($rev));
+  nstore $nhist, $file;
+}

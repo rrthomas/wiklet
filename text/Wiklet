@@ -1,0 +1,11 @@
+Wiklet is a simple [Wiki], a program that runs on a web server to provide a web site that can be edited from within a web browser. The overall look of the site is controlled by HTML templates; pages in the site can be created and edited by clicking on the edit link that appears on each page. Wiklet pages use a simple and concise [Wiklet Text Formatting|markup format].
+
+   * [About Wiklet|About]
+   * [Getting Wiklet|Download]
+   * [Wiklet FAQ|FAQ]
+   * [Wiklet Use|User instructions]
+   * [Wiklet Installation|Installation instructions]
+   * [Wiklet Organisation|Organisation of files and URLs]
+   * [Wiklet Customization|Customization]
+   * [Wiklet Licence|Licence]
+   * [Wiklet Acknowledgements|Acknowledgements]

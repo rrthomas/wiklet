@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+  <head>
+    <title>$homepage: Edit $pagename</title>
+    <link rel="stylesheet" href="/~rrt/template/style.css" type="text/css" />
+  </head>
+
+  <body>
+    <table cellpadding="3">
+      <tr>
+        <td valign="top" class="nav">
+$include{nav.htm}
+        </td>
+        <td valign="top">
+          <form action="$scripturl" method="post">
+            <h1>Edit <input type="text" size="40" name="pagename" value="$pagename"></h1>
+            <p align="center">
+              <textarea name="text" rows="20" cols="75" style="width: 100%">$TEXT</textarea><br />
+              <input type="submit" value="Save">
+              <input type="hidden" name="action" value="save">
+              <input type="hidden" name="page" value="$page">
+            </p>
+            <p>
+              See <a href="$browse{Wiklet Text Formatting}">Wiklet
+              Text Formatting</a> for instructions on how to format text
+            </p>
+          </form>
+        </td>
+      </tr>
+    </table>
+  </body>
+
+</html>

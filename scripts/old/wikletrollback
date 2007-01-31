@@ -1,0 +1,17 @@
+#! /usr/bin/perl -w
+# Roll back a Wiklet page to the given revision
+# RRT 11/9/03
+
+use warnings;
+
+use Storable qw(retrieve nstore);
+use lib "/home/rrt/public_html/cgi-bin";
+use RRT::RevHistory;
+
+$rev = shift;                   # revision to go back to; should default to blank
+
+foreach my $file(@ARGV) {
+  my $hist = retrieve($file);
+  $hist->del($rev);
+  nstore $hist, $file;
+}

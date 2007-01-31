@@ -1,0 +1,17 @@
+/* Style sheet for Wiklet */
+
+/* Body of the page */
+body {
+      color: black;
+      background: white;
+}
+
+/* Links */
+/* a:link { color: #0000FF; } */
+/* a:visited { color: #000099; } */
+
+/* Menu background */
+.nav {
+      background: #CCCCCC;
+      width: 15%;
+}

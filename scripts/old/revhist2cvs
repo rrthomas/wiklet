@@ -1,0 +1,39 @@
+#! /usr/bin/perl -w
+# Turn a RevHistory page into a series of CVS commits
+# RRT 15/3/04
+
+use warnings;
+
+use Storable qw(retrieve nstore);
+use lib "/home/rrt/public_html/cgi-bin";
+use lib "/home/rrt/program/utils/perl";
+use RRT::RevHistory;
+use RRT::Misc;
+
+$from = "oldtext";
+$to = "text";
+#system "cvs co www; mv www $to";
+
+opendir(DIRHANDLE, $from) or die "ERROR: can not read $from\n";
+foreach $file (readdir(DIRHANDLE)) {
+  if ($file ne "." && $file ne "..") {
+    print "$file\n";
+    my $hist = retrieve($from . "/" . $file);
+    print $hist->current . " revision(s) ";
+    for (my $rev = 1; $rev <= $hist->current; $rev++) {
+      my $text = $hist->get($rev);
+      writeFile($to . "/" . $file, $text);
+      chdir $to;
+      if ($rev == 1) {
+        system "cvs add -m \"Add file\" $file";
+        system "cvs ci -m \"Add revision $rev\" $file";
+      } else {
+        system "cvs ci -m \"Add revision $rev\" $file";
+      }
+      chdir "..";
+      print ".";
+    }
+    print "\n";
+  }
+}
+closedir DIRHANDLE;

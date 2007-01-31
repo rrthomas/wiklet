@@ -1,0 +1,27 @@
+#! /usr/bin/perl -w
+# Convert Storable files to plain text Data::Dumper pickles
+# (c) Reuben Thomas  08 Mar 03
+
+use strict;
+use warnings;
+
+use Storable;
+use Data::Dumper;
+
+sub writeFile {
+  my ($file, $cont) = @_;
+  open FILE, ">$file";
+  print FILE $cont;
+  close FILE;
+}
+
+sub pickle {
+  my ($file, $val) = @_;
+  local $Data::Dumper::Terse = 1; # pickle as expression, not assignment
+  writeFile($file, Dumper($val));
+}
+
+foreach my $file(@ARGV) {
+  my $obj = retrieve($file);
+  pickle($file, $obj);
+}

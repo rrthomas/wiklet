@@ -1,0 +1,15 @@
+#! /usr/bin/perl -w
+# Convert a Storable file to a network-order Storable file
+# RRT 28/2/03
+
+use strict;
+use warnings;
+
+use Storable qw(retrieve nstore);
+use lib "/home/rrt/public_html/cgi-bin";
+use RRT::RevHistory; # needed because retrieved object is a RevHistory object
+
+foreach my $file(@ARGV) {
+  my $obj = retrieve($file);
+  nstore $obj, $file;
+}

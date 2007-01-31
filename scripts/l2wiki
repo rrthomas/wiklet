@@ -1,0 +1,35 @@
+#! /bin/sh
+# l2wiki
+# Convert LaTeX to HTML template for Wiki and PDF
+# based on l2web
+# R.R.T.   3/9, 17, 23/11/02, 8,23/12/04
+
+# Usage: l2wiki FROM TO [HEVEA-STYLE [LATEX-COMMAND]]
+# the file from.tex is converted to ~/public_html/download/to.pdf and
+# ~/public_html/template/to.html with optional HeVeA style file
+
+name=`basename $0`
+
+if [ $# -ge 2 -a $# -le 4 ]; then
+    from=$1
+    tmp=__$1
+    to=$2
+    hevea=$3
+    latex=$4
+    mcp -o "$from.*" "$tmp.#1"
+     dolatex $tmp $latex
+     if [ "$latex" != "pdflatex" ]; then
+         dvips -o $tmp.ps $tmp.dvi
+         ps2pdf $tmp.ps $tmp.pdf
+     fi
+     mv $tmp.pdf ~/public_html/download/$to.pdf
+     hevea -I ~/texmf/hevea sym.hva $hevea -o $tmp.html $tmp.tex
+     hevea -I ~/texmf/hevea sym.hva $hevea -o $tmp.html $tmp.tex # run twice to sort out xrefs
+     cuthva -notitle $tmp.html
+     quotes2html $tmp.html
+     recode latin1..utf8 $tmp.html
+     mv $tmp.html ~/public_html/template/$to.html
+     rm -f $tmp.*
+else
+    echo "Usage: $name FROM TO [HEVEA-STYLE [LATEX-COMMAND]]"
+fi
