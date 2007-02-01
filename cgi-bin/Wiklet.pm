@@ -24,7 +24,7 @@ use vars qw($ServerUrl $BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
 
 # Computed globals
 use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
-            $Action $Template $Text $UndefMacro $PageOnly %Cache);
+            $Action $Template $Text $UndefMacro %Cache);
 
 
 # Macros
@@ -36,7 +36,6 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    template => sub {$Template},
    text => sub {$Text},
    undefmacro => sub {$UndefMacro},
-   pageonly => sub {$PageOnly},
    scripturl => sub {$ScriptUrl},
    homepage => sub {$HomePage},
 
@@ -210,15 +209,7 @@ sub renderSmut {
   my ($text, $renderer) = @_;
   my $script = untaint(abs_path($renderer));
   $text = expand($text, \%Macros);
-  use IPC::Open2;
-  binmode(*READER, ":utf8");
-  binmode(*WRITER, ":utf8");
-  my $pid = open2(*READER, *WRITER, $script, "-", $Macros{pagename}, $ServerUrl, $BaseUrl, $DocumentRoot);
-  print WRITER $text;
-  close WRITER;
-  $text = do {local $/, <READER>};
-  waitpid $pid, 0;
-  return $text;
+  return pipe2($script, $text, ":utf8", ":utf8", "-", $Macros{pagename}, $ServerUrl, $BaseUrl, $DocumentRoot);
 }
 
 
@@ -412,10 +403,7 @@ sub doRequest {
    search => sub {
      my $page = getParam("text") || "";
      $Macros{pagename} = sub {$page};
-     $PageOnly = getParam("options");
      my $search = $page;
-     $search = "\"" . $Macros{browse}($search) . "\"" # find only page links
-       if $PageOnly eq "page";
      my $text = "";
      foreach (getIndex()) {
        $text .= li(internalLink($_)) . "\n"
