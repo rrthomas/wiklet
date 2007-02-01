@@ -1,5 +1,5 @@
-#!/usr/bin/perl -Tw
-# Wiklet (c) 2002-2004 Reuben Thomas (rrt@sc3d.org; http://rrt.sc3d.org)
+#! /usr/bin/perl -Tw
+# Wiklet (c) 2002-2007 Reuben Thomas (rrt@sc3d.org; http://rrt.sc3d.org)
 # Distributed under the GNU General Public License
 
 $ENV{PATH}  = '/bin:/usr/bin';
@@ -11,6 +11,8 @@ use Wiklet;
 
 # Configuration
 
+# URL of site server
+$Wiklet::ServerUrl = "http://noteandtheories.dyndns.org";
 # Root of Wiki relative to root of site
 $Wiklet::BaseUrl = "/~user/";
 # Relative URL of CGI script to run Wiki
