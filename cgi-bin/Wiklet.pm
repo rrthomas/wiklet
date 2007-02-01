@@ -19,7 +19,7 @@ use RRT::Macro;
 
 
 # Config vars
-use vars qw($BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
+use vars qw($ServerUrl $BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
             $Recent %Macros %Actions);
 
 # Computed globals
@@ -195,16 +195,25 @@ sub unescapePage {
   return $page;
 }
 
-# Render smut text
+# Render smut to HTML
+sub renderSmutHTML {
+  my ($text) = @_;
+  $text = renderSmut($text, "smut-html.pl");
+  # Pull out the body element of the HTML
+  $text =~ m|<body[^>]*>(.*)</body>|gsmi;
+  return $1;
+}
+
+# Render smut
 sub renderSmut {
   use Cwd qw(abs_path);
-  my ($text) = @_;
-  my $script = untaint(abs_path("smut-html.pl"));
+  my ($text, $renderer) = @_;
+  my $script = untaint(abs_path($renderer));
   $text = expand($text, \%Macros);
   use IPC::Open2;
   binmode(*READER, ":utf8");
   binmode(*WRITER, ":utf8");
-  my $pid = open2(*READER, *WRITER, $script, "-", $Macros{pagename}, $BaseUrl, $DocumentRoot);
+  my $pid = open2(*READER, *WRITER, $script, "-", $Macros{pagename}, $ServerUrl, $BaseUrl, $DocumentRoot);
   print WRITER $text;
   close WRITER;
   $text = do {local $/, <READER>};
@@ -247,7 +256,7 @@ sub getTemplate {
   my $text = readFile("$TemplateDir/$Template");
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return renderSmut(readFile("$TemplateDir/nofile.txt"));
+  return renderSmutHTML(readFile("$TemplateDir/nofile.txt"));
 }
 
 sub dirty {
@@ -259,7 +268,7 @@ sub dirty {
 }
 
 sub checkCVS {
-  abortScript("", renderSmut(getTemplate("nocvs.txt")))
+  abortScript("", renderSmutHTML(getTemplate("nocvs.txt")))
     if !which("cvs");
 }
 
@@ -269,7 +278,7 @@ sub getHtml {
   return $Cache{$page}{text}
     if defined $Cache{$page} && !dirty($page);
   $file = -f $file ? $file : "$TemplateDir/newpage.txt";
-  $Text = renderSmut(readText($file));
+  $Text = renderSmutHTML(readText($file));
   our @depFiles = pageToFile($page);
   my $tmpl = getTemplate("view.htm");
   $tmpl = expand($tmpl, \%Macros);
@@ -301,7 +310,7 @@ sub writePage {
 sub movePage {
   my ($page, $newPage) = @_;
   my $newFile = pageToFile($newPage);
-  abortScript($newPage, renderSmut(getTemplate("pageexists.txt")))
+  abortScript($newPage, renderSmutHTML(getTemplate("pageexists.txt")))
     if -f $newFile;
   my $file = pageToFile($page);
   if ($newPage ne "") {
@@ -362,7 +371,7 @@ sub doRequest {
   $Header = header(-type => "text/html; charset=utf-8",
                    -expires => "now");
   $Action = getParam("action") || "view";
-  abortScript($page, renderSmut(getTemplate("noaction.txt")))
+  abortScript($page, renderSmutHTML(getTemplate("noaction.txt")))
     unless $Actions{$Action};
   checkCVS();
   print $Header . $Actions{$Action}();
@@ -375,12 +384,12 @@ sub doRequest {
    },
 
    wiki => sub {
-     return expand(readPage($Macros{pagename}()), \%Macros);
+     return renderSmut(readPage($Macros{pagename}()), "smut-txt.pl");
    },
 
    edit => sub {
      my $tmpl = getTemplate("edit.htm");
-     abortScript($Macros{pagename}(), renderSmut(getTemplate("readonly.txt")))
+     abortScript($Macros{pagename}(), renderSmutHTML(getTemplate("readonly.txt")))
        if pageLocked($Macros{pagename}());
      my $text = readPage($Macros{pagename}());
      $text =~ s/&/&amp;/g;
