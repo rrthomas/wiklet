@@ -1,0 +1,3 @@
+#! /bin/sh
+# mkdist for Wiklet
+tar zcf wiklet-23.tar.gz --dereference cgi-bin README scripts template text
