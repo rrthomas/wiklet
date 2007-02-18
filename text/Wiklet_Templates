@@ -1,3 +1,6 @@
+Wiklet_Templates
+###
+
 The layout of the [Wiklet] pages can be customized by editing the files in @template@. There is one file for each Wiklet action and some general-purpose files. These are as follows:
 
    <@view.htm@>Page view template. The page contents is in the @\$text@ [Wiklet Macros|macro].

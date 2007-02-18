@@ -1,3 +1,6 @@
+Wiklet_Macros
+###
+
 Macros are special markup which allow things that are not otherwise possible. A macro call is written @\$macro@ if the macro takes no arguments, or @\$macro\{arg_1_,...,arg_n_\}@ if it does. Commas in macro arguments must be escaped with backslashes. Unwanted arguments may be omitted.
 
 There are two sorts of macro: those built in to [Wiklet], which are documented below, and those provided by a particular [Wiki], which should be documented in [Local Macros]. Extra [Wiklet Macros|macros] can be added in @wiki.pl@; the default @wiki.pl@ gives an example.

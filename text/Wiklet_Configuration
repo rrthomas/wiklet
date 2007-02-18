@@ -1,3 +1,6 @@
+Wiklet_Configuration
+###
+
 [Wiklet] is configured in the @wiki.pl@ script. The configuration variables are as follows:
 
    <@BaseUrl@>The base URL of the Wiki relative to the web server. It will typically contain a leading slash. It is used to construct relative URLs to make links within the Wiki. An absolute URL (excluding the initial @http:@) can be used if desired.
