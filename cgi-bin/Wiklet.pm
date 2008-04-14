@@ -1,4 +1,4 @@
-# Wiklet (c) 2002-2006 Reuben Thomas (rrt@sc3d.org)
+# Wiklet (c) 2002-2008 Reuben Thomas (rrt@sc3d.org)
 # http://rrt.sc3d.org/Software/Wiklet
 # Distributed under the GNU General Public License
 
