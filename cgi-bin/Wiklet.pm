@@ -9,6 +9,7 @@ package Wiklet;
 use strict;
 use warnings;
 
+use Perl6::Slurp;
 use Encode;
 use CGI ':standard';
 use CGI::Carp 'fatalsToBrowser';
@@ -238,16 +239,16 @@ sub readPage {
   my ($page) = @_;
   my $file = pageToFile($page);
   return "" unless -f $file;
-  return readFile($file);
+  return scalar(slurp '<:utf8', $file);
 }
 
 sub getTemplate {
   my ($file) = @_;
   $Template = $file;
-  my $text = readFile("$TemplateDir/$Template");
+  my $text = scalar(slurp '<:utf8', "$TemplateDir/$Template");
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return renderSmutHTML(readFile("$TemplateDir/nofile.txt"));
+  return renderSmutHTML(scalar(slurp '<:utf8', "$TemplateDir/nofile.txt"));
 }
 
 sub dirty {
@@ -306,7 +307,7 @@ sub movePage {
   my $file = pageToFile($page);
   if ($newPage ne "") {
     my $text = "";
-    $text = readFile($file) if -f $file; # old page might not exist!
+    $text = scalar(slurp '<:utf8', $file) if -f $file; # old page might not exist!
     checkInFile($newFile, $text);
     $Macros{pagename} = sub {$newPage};
     checkInFile($file, expand(getTemplate("pagemoved.txt"), \%Macros));
@@ -352,7 +353,7 @@ sub doRequest {
   $BrowseUrl = $PrettyUrls ? $BaseUrl : "$ScriptUrl?page=";
   $TextDir = "$DocumentRoot/text";
   $TemplateDir = "$DocumentRoot/template";
-  $CVSRoot = readFile("$TextDir/CVS/Root");
+  $CVSRoot = scalar(slurp '<:utf8', "$TextDir/CVS/Root");
   chomp $CVSRoot;
   $ENV{CVSROOT} = $CVSRoot;
   $page = $page || unescapePage(getParam("page"));
