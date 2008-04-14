@@ -1,4 +1,4 @@
-Wiklet_Macros
+Wiklet Macros
 ###
 
 Macros are special markup which allow things that are not otherwise possible. A macro call is written @\$macro@ if the macro takes no arguments, or @\$macro\{arg_1_,...,arg_n_\}@ if it does. Commas in macro arguments must be escaped with backslashes. Unwanted arguments may be omitted.

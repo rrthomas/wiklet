@@ -1,4 +1,4 @@
-Wiklet_Configuration
+Wiklet Configuration
 ###
 
 [Wiklet] is configured in the @wiki.pl@ script. The configuration variables are as follows:

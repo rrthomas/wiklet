@@ -1,4 +1,4 @@
-Wiklet_Templates
+Wiklet Templates
 ###
 
 The layout of the [Wiklet] pages can be customized by editing the files in @template@. There is one file for each Wiklet action and some general-purpose files. These are as follows:
