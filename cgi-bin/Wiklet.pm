@@ -144,7 +144,7 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
      return "" if !cleanPath($file);
      push @depFiles, "$DocumentRoot/download/$file";
      return $Macros{link}($Macros{url}("download/$file"), "PDF") .
-       " " . $Macros{pdfpages}("$file");
+       " " . $Macros{pdfpages}($file);
    },
 
    pdfdoc => sub {
