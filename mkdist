@@ -1,5 +1,5 @@
 #! /bin/sh
 # mkdist for Wiklet
 dist=wiklet-23.tar.gz
-tar zcf $dist --dereference cgi-bin README scripts template text
+tar zcf $dist --exclude=CVS --dereference cgi-bin README scripts template text
 chmod 644 $dist
