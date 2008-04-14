@@ -12,7 +12,7 @@ use Wiklet;
 # Configuration
 
 # URL of site server
-$Wiklet::ServerUrl = "http://noteandtheories.dyndns.org";
+$Wiklet::ServerUrl = "http://www.example.com";
 # Root of Wiki relative to root of site
 $Wiklet::BaseUrl = "/~user/";
 # Relative URL of CGI script to run Wiki
