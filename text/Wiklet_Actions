@@ -7,4 +7,3 @@ Wiklet Actions
    <@wiki@>Returns the page in Wiki notation, with macros expanded; useful when a plain text version of a page is required.
    <@edit@>Edit the given @page@.
    <@save@>Save the given @page@ under the name @pagename@. If @pagename@ is empty, the page is deleted. @text@ gives the new text. The browser is then redirected to view the page (if it no longer exists, it goes back to the home page).
-   <@search@>Performs a search for @text@. If @options@ is set to @page@, only page links are searched; otherwise, the complete contents of the page is searched.

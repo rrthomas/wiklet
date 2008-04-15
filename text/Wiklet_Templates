@@ -5,7 +5,6 @@ The layout of the [Wiklet] pages can be customized by editing the files in @temp
 
    <@view.htm@>Page view template. The page contents is in the @\$text@ [Wiklet Macros|macro].
    <@edit.htm@>Page editing template. The page contents is substituted for the magic macro @\$TEXT@, which is expanded after the other macros, so that its contents is not subject to macro expansion.
-   <@search.htm@>Search results template. The [Wiklet Macros|macro] @\$text@ contains the search results.
    <@abort.htm@>This template is used for error messages. The [Wiklet Macros|macro] @\$text@ contains the error message.
    <@nav.htm@>Contains the navigation bar.
    <@menu.htm@>Contains the menu of links that goes in the navigation bar.

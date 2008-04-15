@@ -29,4 +29,3 @@ Macros are evaluated after Wiki markup, which means that they do not work in cer
    <@\$template@>The current template being loaded. Useful for constructing the error message in the @nofile.txt@ [Wiki Templates|template].
    <@\$text@>The body of the page, set for use by certain [Wiklet Templates|templates].
    <@\$undefmacro@>The last undefined macro to be executed. Useful for constructing the error message in the @nomacro.txt@ [Wiklet Templates|template].
-   <@\$pageonly@>The value of the @option@ field when the action is @search@.

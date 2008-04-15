@@ -4,10 +4,6 @@ Wiklet Navigation
 The navigation bar contains:
 
    * Links to the [Wiki]'s main areas
-   * The search tool:
-      * You can type text in here and click on _Search_ to search the [Wiki] for occurrences of your text. A list of matching pages will be displayed.
-      * You can list all the pages in the [Wiki] by performing a search without typing anything in the search box.
-      * _Hint to advanced users: the search expression is treated as a Perl regexp._
    * A link to the
 $link{$scripturl?action=changes,recent changes} page, which displays a list of pages that have been updated recently.
    * An _Edit Page_ link, which lets you edit the current page's text. The text can be marked up as described in [Wiklet Text Formatting].

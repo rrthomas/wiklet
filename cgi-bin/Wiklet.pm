@@ -40,12 +40,6 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    scripturl => sub {$ScriptUrl},
    homepage => sub {$HomePage},
 
-   version => sub {
-     my $ver = readPage("Wiklet Version") || "0";
-     chomp $ver;
-     return $ver;
-   },
-
    page => sub {
      return escapePage($Macros{pagename}());
    },
@@ -399,19 +393,6 @@ sub doRequest {
      my $url = escapePage($newPage);
      $Header = "";
      return redirect("$BrowseUrl$url");
-   },
-
-   search => sub {
-     my $page = getParam("text") || "";
-     $Macros{pagename} = sub {$page};
-     my $search = $page;
-     my $text = "";
-     foreach (getIndex()) {
-       $text .= li(internalLink($_)) . "\n"
-         if getHtml($_) =~ /$search/;
-     }
-     $Text = $text;
-     return expand(getTemplate("search.htm"), \%Macros);
    },
   );
 
