@@ -1,7 +1,7 @@
 #! /bin/bash
 # mkdist for Wiklet
 dist=wiklet-23.tar
-tar --create --file $dist --exclude=CVS --exclude=RRT --dereference cgi-bin README scripts template text
+tar --create --file $dist --exclude=CVS --exclude=RRT --dereference cgi-bin README template text
 tar --append --file $dist --exclude=CVS --dereference cgi-bin/RRT/{Macro,Misc}.pm
 chmod 644 $dist
 gzip -f $dist
