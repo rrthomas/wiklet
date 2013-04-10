@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+# Send recent changes in the NT wiki to nt-list
+# Reuben Thomas  23/10/06
+
+use strict;
+use warnings;
+
+my $changes=`wget --quiet --user=nt --password=fish1soup -O - "http://notesandtheories.dyndns.org/cgi-bin/wiki.pl?page=Recent_Changes&action=wiki"`;
+if (length $changes > 2) {
+  $changes = "http://notesandtheories.dyndns.org/Recent_Changes" . $changes;
+  open (WRITER, "|-", "mail", "-s", "NT wiki recent changes", "notesandtheories\@lists.beasts.org");
+  print WRITER $changes;
+  close WRITER;
+}

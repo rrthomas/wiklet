@@ -1,0 +1,28 @@
+#! /usr/bin/perl -w
+# Send recent changes in the NT wiki to nt-list
+# Reuben Thomas  23/10/06; rewritten with Mail::Sender 30/1/07
+
+use Mail::Sender;
+
+$changes=`wget --quiet --user=nt --password=fish1soup -O - "http://notesandtheories.dyndns.org/cgi-bin/wiki.pl?page=Recent_Changes&action=wiki"`;
+
+if (length $changes > 2) {
+  $changes = "http://notesandtheories.dyndns.org/Recent_Changes\n" . $changes;
+  $html_changes=`wget --quiet --user=nt --password=fish1soup -O - "http://notesandtheories.dyndns.org/cgi-bin/wiki.pl?page=Recent_Changes"`;
+  eval {
+    (new Mail::Sender)
+      ->OpenMultipart({
+                       smtp => 'localhost',
+                       from => 'rrt@femur.dyndns.org',
+                       to => 'rrt@sc3d.org',
+#                       to => 'notesandtheories@lists.beasts.org',
+                       subject => 'NT wiki recent changes',
+                       multipart => 'mixed',
+                      })
+        ->Part({ctype => 'multipart/alternative'})
+          ->Part({ ctype => 'text/plain', disposition => 'NONE', msg => $changes})
+            ->Part({ctype => 'text/html', disposition => 'NONE', msg => $html_changes})
+              ->EndPart("multipart/alternative")
+                ->Close();
+  } or print "Error sending mail: $Mail::Sender::Error\n";
+}
