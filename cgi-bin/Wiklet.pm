@@ -203,7 +203,6 @@ sub renderSmut {
   use Cwd qw(abs_path);
   my ($text, $renderer) = @_;
   my $script = untaint(abs_path($renderer));
-  $text = expand($text, \%Macros);
   return pipe2($script, $text, ":utf8", ":utf8", "-", $Macros{pagename}, $ServerUrl, $BaseUrl, $DocumentRoot);
 }
 
@@ -242,7 +241,7 @@ sub getTemplate {
   my $text = scalar(slurp '<:utf8', "$TemplateDir/$Template");
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return renderSmutHTML(scalar(slurp '<:utf8', "$TemplateDir/nofile.txt"));
+  return expand(renderSmutHTML(scalar(slurp '<:utf8', "$TemplateDir/nofile.txt")));
 }
 
 sub dirty {
@@ -254,7 +253,7 @@ sub dirty {
 }
 
 sub checkCVS {
-  abortScript("", renderSmutHTML(getTemplate("nocvs.txt")))
+  abortScript("", expand(renderSmutHTML(getTemplate("nocvs.txt"))))
     if !which("cvs");
 }
 
