@@ -263,7 +263,7 @@ sub getHtml {
   return $Cache{$page}{text}
     if defined $Cache{$page} && !dirty($page);
   $file = -f $file ? $file : "$TemplateDir/newpage.txt";
-  $Text = renderSmutHTML(readText($file));
+  $Text = renderSmutHTML(scalar(slurp '<:utf8', $file));
   our @depFiles = pageToFile($page);
   my $tmpl = getTemplate("view.htm");
   $tmpl = expand($tmpl, \%Macros);
