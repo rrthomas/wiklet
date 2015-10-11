@@ -1,8 +1,7 @@
-# Wiklet (c) 2002-2008 Reuben Thomas (rrt@sc3d.org)
+# Wiklet (c) 2002-2015 Reuben Thomas (rrt@sc3d.org)
 # http://rrt.sc3d.org/Software/Wiklet
 # Distributed under the GNU General Public License
 
-# Definitely needs 5.8.0; not yet tested with < 5.8.4.
 require 5.8.4;
 package Wiklet;
 
