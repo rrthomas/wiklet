@@ -9,13 +9,16 @@ package Wiklet;
 use strict;
 use warnings;
 
-use Perl6::Slurp;
 use Encode;
 use CGI ':standard';
 use CGI::Carp 'fatalsToBrowser';
-use File::stat;
 use File::Basename;
+use File::stat;
 use POSIX 'strftime';
+use Cwd qw(abs_path);
+
+use Perl6::Slurp;
+
 use RRT::Misc;
 use RRT::Macro;
 
