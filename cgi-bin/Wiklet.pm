@@ -281,7 +281,8 @@ sub getHtml {
 sub checkInFile {
   my ($file, $text) = @_;
   my $new = ! -f $file;
-  writeFile($file, $text);
+  use File::Slurp; # for write_file
+  write_file($file, $text);
   system "cvs add -m \"Add file\" $file 2>/dev/null 1>&2"
     if $new;
   system "cvs ci -m \"\" $file 2>/dev/null 1>&2";
