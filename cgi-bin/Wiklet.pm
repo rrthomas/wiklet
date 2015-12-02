@@ -13,6 +13,7 @@ use Perl6::Slurp;
 use Encode;
 use CGI ':standard';
 use CGI::Carp 'fatalsToBrowser';
+use File::stat;
 use File::Basename;
 use POSIX 'strftime';
 use RRT::Misc;
@@ -225,7 +226,7 @@ sub pageMTime {
   my ($page) = @_;
   my $file = pageToFile($page);
   return 0 unless -f $file; # Ignore objects that aren't files
-  return mtime($file);
+  return stat($file)->mtime or 0;
 }
 
 sub readPage {
@@ -247,7 +248,7 @@ sub getTemplate {
 sub dirty {
   my ($page)= @_;
   foreach (@{$Cache{$page}{depfiles}}) {
-    return 1 if ($Cache{$page}{mtime} != mtime($_));
+    return 1 if ($Cache{$page}{mtime} != (stat($_)->mtime or 0));
   }
   return 0;
 }
@@ -268,7 +269,7 @@ sub getHtml {
   my $tmpl = getTemplate("view.htm");
   $tmpl = expand($tmpl, \%Macros);
   $Cache{$page} = {text => $tmpl,
-                   mtime => mtime($file),
+                   mtime => (stat($file)->mtime or 0),
                    depfiles => [@depFiles]}
     if -f $file;
   return $tmpl;
