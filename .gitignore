@@ -1,1 +1,6 @@
 *.tar.gz
+text-CVS/
+text/CVS
+.htaccess
+cgi-bin/.htaccess
+cgi-bin/wiki-site.pl
