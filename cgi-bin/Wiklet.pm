@@ -32,6 +32,26 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
             $Action $Template $Text $UndefMacro %Cache);
 
 
+# Redefine RRT::Misc normalize
+# FIXME: sort this out!
+# Normalize $file, relative to optional $currentDir (or "/" if not given); restrict to $rootDir
+use Cwd 'realpath';
+sub normalizePath {
+  my ($file, $currentDir, $rootDir) = @_;
+  if (!defined($rootDir)) {
+    $rootDir = $currentDir || "/";
+    $currentDir = "/";
+  }
+  my $path = (fileparse($currentDir))[1] if $currentDir && $currentDir ne "";
+  $path ||= "/";
+  $file = "$path$file" if $file !~ m|^/|;
+  $file =~ s|^\./||;
+  my $realfile = realpath($file);
+  return "" if $realfile !~ /^$rootDir/;
+  return $file;
+}
+
+
 # Macros
 
 %Macros =
@@ -58,8 +78,7 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
 
    url => sub {
      my ($path) = @_;
-     return "" if !cleanPath($path);
-     return "$BaseUrl" . ($path || "");
+     return "$BaseUrl" . (normalizePath($path || "", "/", $DocumentRoot));
    },
 
    browse => sub {
@@ -87,21 +106,24 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    include => sub {
      my ($file) = @_;
      our @depFiles;
-     push @depFiles, "$TemplateDir/$file";
+     push @depFiles, $Macros{canonicalpath}("$TemplateDir/$file");
      return getTemplate($file);
+   },
+
+   canonicalpath => sub {
+     my ($file) = @_;
+     return "/" . normalizePath($file, "/", $DocumentRoot);
    },
 
    link => sub {
      my ($url, $desc) = @_;
-     return "" if !cleanPath($url);
      $desc = $url if !$desc || $desc eq "";
      return a({-href => $url}, $desc);
    },
 
    filesize => sub {
      my ($file) = @_;
-     return "" if !cleanPath($file);
-     $file = "$DocumentRoot/download/$file";
+     $file = $Macros{canonicalpath}($file);
      our @depFiles;
      push @depFiles, $file;
      return numberToSI(-s $file || 0) . "b";
@@ -109,9 +131,8 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
 
    image => sub {
      my ($image, $alt, $width, $height) = @_;
-     return "" if !cleanPath($image);
      return "" if $image !~ /(gif|jpg|jpeg|png|bmp)$/;
-     $image = $Macros{url}("image/$image") if $image !~ /^http:/;
+     $image = $Macros{url}($Macros{canonicalpath}("image/$image")) if $image !~ /^http:/;
      my %attr = ("-src" => $image);
      $attr{-alt} = $alt if $alt;
      $attr{-width} = $width if $width;
@@ -121,18 +142,17 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
 
    webfile => sub {
      my ($file, $format) = @_;
-     return "" if !cleanPath($file);
+     $file = $Macros{canonicalpath}("download/$file");
      our @depFiles;
-     push @depFiles, "$DocumentRoot/download/$file";
+     push @depFiles, $file;
      my $size = $Macros{filesize}($file);
-     return $Macros{link}($Macros{url}("download/$file"),
-                          $format) . " $size";
+     return $Macros{link}($Macros{url}($file), $format) . " $size";
    },
 
    pdfpages => sub {
      my ($file) = @_;
-     return "" if !cleanPath($file);
-     my $n = `pdfinfo "$DocumentRoot/download/$file"`;
+     $file = $Macros{canonicalpath}("download/$file");
+     my $n = `pdfinfo "$file"`;
      $n =~ /Pages:\s*(\pN+)/;
      return $1 . ($1 eq "1" ? "p." : "pp.");
    },
@@ -140,10 +160,9 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    pdffile => sub {
      our @depFiles;
      my ($file) = @_;
-     return "" if !cleanPath($file);
-     push @depFiles, "$DocumentRoot/download/$file";
-     return $Macros{link}($Macros{url}("download/$file"), "PDF") .
-       " " . $Macros{pdfpages}($file);
+     $file = $Macros{canonicalpath}("download/$file");
+     push @depFiles, $file;
+     return $Macros{link}($Macros{url}($file), "PDF") . " " . $Macros{pdfpages}($file);
    },
 
    pdfdoc => sub {
@@ -195,8 +214,8 @@ sub unescapePage {
 
 # Render smut to HTML
 sub renderSmutHTML {
-  my ($text) = @_;
-  $text = renderSmut($text, "smut-html.pl");
+  my ($file) = @_;
+  my $text = renderSmut($file, "smut-html.pl");
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
   return $1;
@@ -204,10 +223,10 @@ sub renderSmutHTML {
 
 # Render smut
 sub renderSmut {
-  use Cwd qw(abs_path);
-  my ($text, $renderer) = @_;
+  my ($file, $renderer) = @_;
   my $script = untaint(abs_path($renderer));
-  return pipe2($script, $text, ":utf8", ":utf8", "-", $Macros{pagename}, $ServerUrl, $BaseUrl, $DocumentRoot);
+  open(READER, "-|:utf8", $script, $file, $Macros{pagename}(), $BaseUrl, $DocumentRoot);
+  return scalar(slurp \*READER);
 }
 
 
@@ -239,13 +258,18 @@ sub readPage {
   return scalar(slurp '<:utf8', $file);
 }
 
-sub getTemplate {
+sub getTemplateName {
   my ($file) = @_;
   $Template = $file;
-  my $text = scalar(slurp '<:utf8', "$TemplateDir/$Template");
+  return $Macros{canonicalpath}("$TemplateDir/$Template");
+}
+
+sub getTemplate {
+  my ($file) = @_;
+  my $text = scalar(slurp '<:utf8', getTemplateName($file));
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return expand(renderSmutHTML(scalar(slurp '<:utf8', "$TemplateDir/nofile.txt")));
+  return expand(renderSmutHTML($Macros{canonicalpath}("$TemplateDir/nofile.txt")));
 }
 
 sub dirty {
@@ -257,7 +281,7 @@ sub dirty {
 }
 
 sub checkCVS {
-  abortScript("", expand(renderSmutHTML(getTemplate("nocvs.txt"))))
+  abortScript("", expand(renderSmutHTML(getTemplateName("nocvs.txt"))))
     if !which("cvs");
 }
 
@@ -267,7 +291,7 @@ sub getHtml {
   return $Cache{$page}{text}
     if defined $Cache{$page} && !dirty($page);
   $file = -f $file ? $file : "$TemplateDir/newpage.txt";
-  $Text = renderSmutHTML(scalar(slurp '<:utf8', $file));
+  $Text = renderSmutHTML($file);
   our @depFiles = pageToFile($page);
   my $tmpl = getTemplate("view.htm");
   $tmpl = expand($tmpl, \%Macros);
@@ -300,7 +324,7 @@ sub writePage {
 sub movePage {
   my ($page, $newPage) = @_;
   my $newFile = pageToFile($newPage);
-  abortScript($newPage, renderSmutHTML(getTemplate("pageexists.txt")))
+  abortScript($newPage, renderSmutHTML(getTemplateName("pageexists.txt")))
     if -f $newFile;
   my $file = pageToFile($page);
   if ($newPage ne "") {
@@ -356,12 +380,12 @@ sub doRequest {
   $ENV{CVSROOT} = $CVSRoot;
   $page ||= unescapePage(getParam("page"));
   $page = $HomePage
-    if !defined $page || $page eq "" || !cleanPath($page);
+    if !defined $page || $page eq "";
   $Macros{pagename} = sub {$page};
   $Header = header(-type => "text/html; charset=utf-8",
                    -expires => "now");
   $Action = getParam("action") || "view";
-  abortScript($page, renderSmutHTML(getTemplate("noaction.txt")))
+  abortScript($page, renderSmutHTML(getTemplateName("noaction.txt")))
     unless $Actions{$Action};
   checkCVS();
   print $Header . $Actions{$Action}();
@@ -374,12 +398,12 @@ sub doRequest {
    },
 
    wiki => sub {
-     return renderSmut(readPage($Macros{pagename}()), "smut-txt.pl");
+     return renderSmut(pageToFile($Macros{pagename}()), "smut-txt.pl");
    },
 
    edit => sub {
      my $tmpl = getTemplate("edit.htm");
-     abortScript($Macros{pagename}(), renderSmutHTML(getTemplate("readonly.txt")))
+     abortScript($Macros{pagename}(), renderSmutHTML(getTemplateName("readonly.txt")))
        if pageLocked($Macros{pagename}());
      my $text = readPage($Macros{pagename}());
      $text =~ s/&/&amp;/g;
