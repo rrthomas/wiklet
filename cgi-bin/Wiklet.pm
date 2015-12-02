@@ -179,7 +179,7 @@ sub internalLink {
 
 sub escapePage {
   my ($page) = @_;
-  $page = $page || "";
+  $page ||= "";
   $page =~ s/([^-0-9a-zA-Z. ])/sprintf "=%X=", ord $1/ge;
   $page =~ s/ /_/g;
   return $page;
@@ -187,7 +187,7 @@ sub escapePage {
 
 sub unescapePage {
   my ($page) = @_;
-  $page = $page || "";
+  $page ||= "";
   $page =~ s/=([0-9A-F]+)=/chr (hex $1)/ge;
   $page =~ s/_/ /g;
   return $page;
@@ -354,7 +354,7 @@ sub doRequest {
   $CVSRoot = scalar(slurp '<:utf8', "$TextDir/CVS/Root");
   chomp $CVSRoot;
   $ENV{CVSROOT} = $CVSRoot;
-  $page = $page || unescapePage(getParam("page"));
+  $page ||= unescapePage(getParam("page"));
   $page = $HomePage
     if !defined $page || $page eq "" || !cleanPath($page);
   $Macros{pagename} = sub {$page};
