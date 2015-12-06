@@ -5,3 +5,4 @@ tar --create --file $dist --exclude=CVS --exclude=RRT --exclude=".*" --wildcards
 tar --append --file $dist --exclude=CVS --exclude=".*" --wildcards --dereference cgi-bin/RRT/{Macro,Misc}.pm
 chmod 644 $dist
 gzip -f $dist
+mv $dist.gz download/
