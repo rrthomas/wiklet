@@ -121,12 +121,13 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    },
 
    webfile => sub {
-     my ($file, $format) = @_;
-     $file = $Macros{canonicalpath}("download/$file");
+     my ($path, $format) = @_;
+     $path = "download/$path";
+     my $file = $Macros{canonicalpath}($path);
      our @depFiles;
      push @depFiles, $file;
-     my $size = $Macros{filesize}($file);
-     return $Macros{link}($Macros{url}($file), $format) . " $size";
+     my $size = $Macros{filesize}($path);
+     return $Macros{link}($Macros{url}($path), $format) . " $size";
    },
 
    pdfpages => sub {
