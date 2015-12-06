@@ -32,26 +32,6 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
             $Action $Template $Text $UndefMacro %Cache);
 
 
-# Redefine RRT::Misc normalize
-# FIXME: sort this out!
-# Normalize $file, relative to optional $currentDir (or "/" if not given); restrict to $rootDir
-use Cwd 'realpath';
-sub normalizePath {
-  my ($file, $currentDir, $rootDir) = @_;
-  if (!defined($rootDir)) {
-    $rootDir = $currentDir || "/";
-    $currentDir = "/";
-  }
-  my $path = (fileparse($currentDir))[1] if $currentDir && $currentDir ne "";
-  $path ||= "/";
-  $file = "$path$file" if $file !~ m|^/|;
-  $file =~ s|^\./||;
-  my $realfile = realpath($file);
-  return "" if $realfile !~ /^$rootDir/;
-  return $file;
-}
-
-
 # Macros
 
 %Macros =
@@ -78,7 +58,7 @@ sub normalizePath {
 
    url => sub {
      my ($path) = @_;
-     return "$BaseUrl" . (normalizePath($path || "", "/", $DocumentRoot));
+     return $BaseUrl . $path;
    },
 
    browse => sub {
@@ -106,13 +86,13 @@ sub normalizePath {
    include => sub {
      my ($file) = @_;
      our @depFiles;
-     push @depFiles, $Macros{canonicalpath}("$TemplateDir/$file");
+     push @depFiles, "$TemplateDir/$file";
      return getTemplate($file);
    },
 
    canonicalpath => sub {
      my ($file) = @_;
-     return "/" . normalizePath($file, "/", $DocumentRoot);
+     return "$DocumentRoot/$file";
    },
 
    link => sub {
@@ -261,7 +241,7 @@ sub readPage {
 sub getTemplateName {
   my ($file) = @_;
   $Template = $file;
-  return $Macros{canonicalpath}("$TemplateDir/$Template");
+  return "$TemplateDir/$Template";
 }
 
 sub getTemplate {
@@ -269,7 +249,7 @@ sub getTemplate {
   my $text = scalar(slurp '<:utf8', getTemplateName($file));
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return expand(renderSmutHTML($Macros{canonicalpath}("$TemplateDir/nofile.txt")));
+  return expand(renderSmutHTML("$TemplateDir/nofile.txt"));
 }
 
 sub dirty {
