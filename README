@@ -1,17 +1,1 @@
-                          Wiklet release 23
-                          =================
-
-                     Reuben Thomas (rrt@sc3d.org)
-
-
-Wiklet is a simple Wiki: it is designed to be simple to use, simple to
-install and maintain, and its code is meant to be easy to understand. It
-is released under the GNU GPL version 3 (or, at your option, any later
-version). There is no warranty.
-
-See http://rrt.sc3d.org/Software/Wiklet/text/Getting_Wiklet to download the
-code, and http://rrt.sc3d.org/Software/Wiklet/text/Wiklet_Installation for
-installation instructions.
-
-To report bugs or contribute to the project, see
-https://github.com/rrthomas/wiklet
+text/Wiklet
