@@ -257,7 +257,7 @@ sub getTemplate {
   my $text = scalar(slurp '<:utf8', getTemplateName($file));
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return expand(renderSmutHTML("$TemplateDir/nofile.txt"));
+  return expand(renderSmutHTML("$TemplateDir/nofile.txt"), \%Macros);
 }
 
 sub dirty {
@@ -269,7 +269,7 @@ sub dirty {
 }
 
 sub checkCVS {
-  abortScript("", expand(renderSmutHTML(getTemplateName("nocvs.txt"))))
+  abortScript("", expand(renderSmutHTML(getTemplateName("nocvs.txt")), \%Macros))
     if !which("cvs");
 }
 
