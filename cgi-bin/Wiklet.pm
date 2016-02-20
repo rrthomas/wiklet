@@ -1,4 +1,4 @@
-# Wiklet (c) 2002-2015 Reuben Thomas (rrt@sc3d.org)
+# Wiklet (c) 2002-2016 Reuben Thomas (rrt@sc3d.org)
 # http://rrt.sc3d.org/Software/Wiklet
 # Distributed under the GNU General Public License version 3,
 # or, at your option, any later version.
@@ -193,13 +193,20 @@ sub unescapePage {
   return $page;
 }
 
+# Turn entities into characters
+sub expandNumericEntities {
+  my ($text) = @_;
+  $text =~ s/&#(\pN+);/chr($1)/ge;
+  return $text;
+}
+
 # Render smut to HTML
 sub renderSmutHTML {
   my ($file) = @_;
   my $text = renderSmut($file, "smut-html.pl");
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
-  return $1;
+  return expandNumericEntities($1);
 }
 
 # Render smut
@@ -274,7 +281,7 @@ sub getHtml {
   $file = -f $file ? $file : "$TemplateDir/newpage.txt";
   $Text = renderSmutHTML($file);
   our @depFiles = pageToFile($page);
-  my $tmpl = getTemplate("view.htm");
+  my $tmpl = expandNumericEntities(getTemplate("view.htm"));
   $tmpl = expand($tmpl, \%Macros);
   $Cache{$page} = {text => $tmpl,
                    mtime => (stat($file)->mtime or 0),
@@ -337,7 +344,7 @@ sub abortScript {
   my ($page, $msg) = @_;
   $Macros{pagename} = sub {$page};
   $Text = $msg;
-  my $tmpl = getTemplate("abort.htm");
+  my $tmpl = expandNumericEntities(getTemplate("abort.htm"));
   $tmpl = expand($tmpl, \%Macros);
   print $Header . $tmpl;
   exit;
@@ -383,7 +390,7 @@ sub doRequest {
    },
 
    edit => sub {
-     my $tmpl = getTemplate("edit.htm");
+     my $tmpl = expandNumericEntities(getTemplate("edit.htm"));
      abortScript($Macros{pagename}(), renderSmutHTML(getTemplateName("readonly.txt")))
        if pageLocked($Macros{pagename}());
      my $text = readPage($Macros{pagename}());
