@@ -20,7 +20,7 @@ use Cwd qw(abs_path);
 use Perl6::Slurp;
 
 use RRT::Misc;
-use RRT::Macro;
+use RRT::Macro 3.10;
 
 
 # Config vars
@@ -87,7 +87,7 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
      my ($file) = @_;
      our @depFiles;
      push @depFiles, "$TemplateDir/$file";
-     return getTemplate($file);
+     return expand(getTemplate($file), \%Macros);
    },
 
    canonicalpath => sub {
