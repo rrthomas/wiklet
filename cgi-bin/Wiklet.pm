@@ -213,7 +213,7 @@ sub renderSmutHTML {
 sub renderSmut {
   my ($file, $renderer) = @_;
   my $script = untaint(abs_path($renderer));
-  open(READER, "-|:utf8", $script, $file, $Macros{pagename}(), $BaseUrl, $DocumentRoot);
+  open(READER, "-|:utf8", $script, $file, "", $BaseUrl, $DocumentRoot);
   return scalar(slurp \*READER);
 }
 
