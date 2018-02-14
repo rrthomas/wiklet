@@ -1,4 +1,4 @@
-# Wiklet (c) 2002-2016 Reuben Thomas (rrt@sc3d.org)
+# Wiklet (c) 2002-2018 Reuben Thomas (rrt@sc3d.org)
 # http://rrt.sc3d.org/Software/Wiklet
 # Distributed under the GNU General Public License version 3,
 # or, at your option, any later version.
@@ -18,6 +18,7 @@ use POSIX 'strftime';
 use Cwd qw(abs_path);
 
 use Perl6::Slurp;
+use File::Which;
 
 use RRT::Misc;
 use RRT::Macro 3.10;
