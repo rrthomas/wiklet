@@ -30,7 +30,7 @@ use vars qw($ServerUrl $BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
 
 # Computed globals
 use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
-            $Action $Template $Text $UndefMacro %Cache);
+            $Action $Template $Text %Cache);
 
 
 # Macros
@@ -41,7 +41,6 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    action => sub {$Action},
    template => sub {$Template},
    text => sub {$Text},
-   undefmacro => sub {$UndefMacro},
    scripturl => sub {$ScriptUrl},
    homepage => sub {$HomePage},
 
@@ -201,21 +200,16 @@ sub expandNumericEntities {
   return $text;
 }
 
-# Render smut to HTML
-sub renderSmutHTML {
+# Render Markdown to HTML
+sub renderMarkdown {
   my ($file) = @_;
-  my $text = renderSmut($file, "smut-html.pl");
+  open(READER, "-|:utf8", "markdown", "-base", $BaseUrl, "-f", "autolink", $file);
+  my $text = scalar(slurp \*READER);
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
-  return expandNumericEntities($1);
-}
-
-# Render smut
-sub renderSmut {
-  my ($file, $renderer) = @_;
-  my $script = untaint(abs_path($renderer));
-  open(READER, "-|:utf8", $script, $file, "", $BaseUrl, $DocumentRoot);
-  return scalar(slurp \*READER);
+  # Render local links
+  $text =~ s|\[([^]]*)\]|internalLink($1)|gsme;
+  return expandNumericEntities($text);
 }
 
 
@@ -223,7 +217,7 @@ sub renderSmut {
 
 sub pageToFile {
   my ($page) = @_;
-  my $file = "$TextDir/" . escapePage($page);
+  my $file = "$TextDir/" . escapePage($page) . ".md";
   return $file;
 }
 
@@ -237,7 +231,7 @@ sub pageMTime {
   my ($page) = @_;
   my $file = pageToFile($page);
   return 0 unless -f $file; # Ignore objects that aren't files
-  return stat($file)->mtime or 0;
+  return stat($file)->mtime || 0;
 }
 
 sub readPage {
@@ -258,7 +252,7 @@ sub getTemplate {
   my $text = scalar(slurp '<:utf8', getTemplateName($file));
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return expand(renderSmutHTML("$TemplateDir/nofile.txt"), \%Macros);
+  return expand(renderMarkdown("$TemplateDir/nofile.md"), \%Macros);
 }
 
 sub dirty {
@@ -270,8 +264,13 @@ sub dirty {
 }
 
 sub checkCVS {
-  abortScript("", expand(renderSmutHTML(getTemplateName("nocvs.txt")), \%Macros))
+  abortScript("", expand(renderMarkdown(getTemplateName("nocvs.md")), \%Macros))
     if !which("cvs");
+}
+
+sub checkMarkdown {
+  abortScript("", expand(getTemplateName("nomarkdown.htm"), \%Macros))
+    if !which("markdown");
 }
 
 sub getHtml {
@@ -279,8 +278,8 @@ sub getHtml {
   my $file = pageToFile($page);
   return $Cache{$page}{text}
     if defined $Cache{$page} && !dirty($page);
-  $file = -f $file ? $file : "$TemplateDir/newpage.txt";
-  $Text = renderSmutHTML($file);
+  $file = -f $file ? $file : "$TemplateDir/newpage.md";
+  $Text = renderMarkdown($file);
   our @depFiles = pageToFile($page);
   my $tmpl = expandNumericEntities(getTemplate("view.htm"));
   $tmpl = expand($tmpl, \%Macros);
@@ -313,7 +312,7 @@ sub writePage {
 sub movePage {
   my ($page, $newPage) = @_;
   my $newFile = pageToFile($newPage);
-  abortScript($newPage, renderSmutHTML(getTemplateName("pageexists.txt")))
+  abortScript($newPage, renderMarkdown(getTemplateName("pageexists.md")))
     if -f $newFile;
   my $file = pageToFile($page);
   if ($newPage ne "") {
@@ -321,7 +320,7 @@ sub movePage {
     $text = scalar(slurp '<:utf8', $file) if -f $file; # old page might not exist!
     checkInFile($newFile, $text);
     $Macros{pagename} = sub {$newPage};
-    checkInFile($file, expand(getTemplate("pagemoved.txt"), \%Macros));
+    checkInFile($file, expand(getTemplate("pagemoved.md"), \%Macros));
   } else {                      # we are deleting the old page
     system "cvs rm -f $file 2>/dev/null 1>&2";
     system "cvs ci -m \"\" $file 2>/dev/null 1>&2";
@@ -374,8 +373,9 @@ sub doRequest {
   $Header = header(-type => "text/html; charset=utf-8",
                    -expires => "now");
   $Action = getParam("action") || "view";
-  abortScript($page, renderSmutHTML(getTemplateName("noaction.txt")))
+  abortScript($page, renderMarkdown(getTemplateName("noaction.md")))
     unless $Actions{$Action};
+  checkMarkdown();
   checkCVS();
   print $Header . $Actions{$Action}();
 }
@@ -386,13 +386,9 @@ sub doRequest {
      return getHtml($Macros{pagename}());
    },
 
-   wiki => sub {
-     return renderSmut(pageToFile($Macros{pagename}()), "smut-txt.pl");
-   },
-
    edit => sub {
      my $tmpl = expandNumericEntities(getTemplate("edit.htm"));
-     abortScript($Macros{pagename}(), renderSmutHTML(getTemplateName("readonly.txt")))
+     abortScript($Macros{pagename}(), renderMarkdown(getTemplateName("readonly.md")))
        if pageLocked($Macros{pagename}());
      my $text = readPage($Macros{pagename}());
      $text =~ s/&/&amp;/g;
