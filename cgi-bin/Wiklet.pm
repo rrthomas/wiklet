@@ -361,7 +361,7 @@ sub doRequest {
      $text =~ s/</&lt;/g;
      $text =~ s/>/&gt;/g;
      $tmpl = expand($tmpl, \%Macros);
-     $tmpl =~ s/\$tEXT/$text/g; # First letter of $TEXT is lower-cased by expand()
+     $tmpl =~ s/\$TEXT/$text/g;
      return $tmpl;
    },
 
