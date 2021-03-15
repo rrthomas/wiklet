@@ -309,7 +309,7 @@ sub getIndex {
 sub abortScript {
   my ($page, $msg) = @_;
   $Macros{pagename} = sub {$page};
-  $Text = $msg;
+  $Text = expand($msg, \%Macros);
   my $tmpl = expandNumericEntities(getTemplate("abort.htm"));
   $tmpl = expand($tmpl, \%Macros);
   print $Header . $tmpl;
