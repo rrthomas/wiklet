@@ -130,33 +130,6 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
      return $Macros{link}($Macros{url}($path), $format) . " $size";
    },
 
-   pdfpages => sub {
-     my ($file) = @_;
-     $file = $Macros{canonicalpath}("download/$file");
-     my $n = `pdfinfo "$file"`;
-     $n =~ /Pages:\s*(\pN+)/;
-     return $1 . ($1 eq "1" ? "p." : "pp.");
-   },
-
-   pdffile => sub {
-     our @depFiles;
-     my ($file) = @_;
-     $file = $Macros{canonicalpath}("download/$file");
-     push @depFiles, $file;
-     return $Macros{link}($Macros{url}($file), "PDF") . " " . $Macros{pdfpages}($file);
-   },
-
-   pdfdoc => sub {
-     my ($file, $title, $comment) = @_;
-     $comment ||= "";
-     return em($title) . " ($comment" . $Macros{pdffile}($file) . ")";
-   },
-
-   webdoc => sub {
-     my ($file, $title, $comment) = @_;
-     return $Macros{pdfdoc}($file, em(internalLink($title)), $comment);
-   },
-
    counter => sub {
      our $page;
      my ($countPage) = @_;
