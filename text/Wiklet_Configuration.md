@@ -3,9 +3,9 @@
 [Wiklet] is configured in the `wiki.pl` script. The configuration variables are as follows:
 
 =`BaseUrl`=
-   The base URL of the Wiki relative to the web server. It will typically contain a leading slash. It is used to construct relative URLs to make links within the Wiki. An absolute URL (excluding the initial `https:`) can be used if desired.
+   The base URL of the Wiki relative to the web site. It will typically contain a leading slash. It is used to construct relative URLs to make links within the Wiki. An absolute URL (excluding the initial `https:`) can be used if desired.
 =`ScriptUrl`=
-   The URL of the Wiki script relative to the web server. The same remarks apply as to `BaseUrl`.
+   The URL of the Wiki script relative to the web site. The same remarks apply as to `BaseUrl`.
 =`PrettyUrls`=
    Leave this line commented out unless you want to use [Pretty Wiklet URLs]. Since this can be fiddly, it's a good idea to wait until you've got Wiklet working before trying to get this set up.
 =`HomePage`=
