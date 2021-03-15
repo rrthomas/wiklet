@@ -25,7 +25,7 @@ use RRT::Macro 3.10;
 
 
 # Config vars
-use vars qw($ServerUrl $BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
+use vars qw($BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
             $Recent %Macros %Actions);
 
 # Computed globals
