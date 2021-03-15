@@ -143,13 +143,6 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
 
 # Rendering
 
-sub internalLink {
-  my ($page, $desc) = @_;
-  my $url = escapePage($page);
-  $desc = $page if !$desc || $desc eq "";
-  return a({-href => "$BrowseUrl$url"}, $desc);
-}
-
 sub escapePage {
   my ($page) = @_;
   $page ||= "";
@@ -181,7 +174,7 @@ sub renderMarkdown {
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
   # Render local links
-  $text =~ s|\[([^]]*)\]|internalLink($1)|gsme;
+  $text =~ s|\[([^]]*)\]|a({-href => $BrowseUrl . escapePage($1)}, $1)|gsme;
   return expandNumericEntities($text);
 }
 
