@@ -17,12 +17,11 @@ The [distribution archive](Getting Wiklet) is organised as follows:
 
 The file layout for a [Wiklet] installation follows that of the distribution archive. The directory layout is as follows:
 
-=`DocumentRoot`=
-    =`text`=
-    =`template`=
-    =`image`=
-    =`download`=
-    <!-- blank -->
+* `DocumentRoot`
+    * `text`
+    * `template`
+    * `image`
+    * `download`
 
 The top-level directories `template`, `image` and `download` may have subdirectories created underneath them as convenient. `text` is managed by the Wiklet scripts. `cgi-bin` may live under `DocumentRoot` or elsewhere, depending on the system.
 
