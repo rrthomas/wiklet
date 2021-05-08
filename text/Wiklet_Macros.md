@@ -2,7 +2,7 @@
 
 Macros are special markup which allow things that are not otherwise possible. A macro call is written `\$macro` if the macro takes no arguments, or `\$macro\{arg1,...,argN\}` if it does. Commas in macro arguments must be escaped with backslashes. Unwanted arguments may be omitted.
 
-There are two sorts of macro: those built in to [Wiklet], which are documented below, and those provided by a particular [Wiki], which should be documented in [Local Macros]. Extra [macros](Wiklet Macros) can be added in `wiki.pl`; the default `wiki.pl` gives an example.
+There are two sorts of macro: those built in to [Wiklet], which are documented below, and those provided by a particular [Wiki], which should be documented in [Local Macros]. Extra [macros](Wiklet Macros) can be added in `wiklet.pl`; the default `wiklet.pl` gives an example.
 
 Macros are evaluated after Wiki markup, which means that they do not work in certain places, for example as part of a link. Some macros invoke certain [Wiklet Templates].
 

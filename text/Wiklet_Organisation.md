@@ -7,7 +7,7 @@ The [distribution archive](Getting Wiklet) is organised as follows:
 =`README.md`=
     is a quick introduction.
 =`cgi-bin`=
-    contains the main Wiklet program `Wiklet.pm`, some helper modules in `VCS` and `RRT`, and the front-end script and configuration file `wiki.pl`.
+    contains the main Wiklet program `Wiklet.pm`, some helper modules in `VCS` and `RRT`, and the front-end script and configuration file `wiklet.pl`.
 =`text`=
     contains the contents of the Wiki, which is initially just the Wiklet documentation. Pages can be locked by making them read-only; this can be helpful to make sure that a Wiki's home page, at least, is safe from defacement. It can also be useful for other sensitive information such as CVs.
 =`template`=

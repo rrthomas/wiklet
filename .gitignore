@@ -3,4 +3,4 @@ text-CVS/
 text/CVS
 .htaccess
 cgi-bin/.htaccess
-cgi-bin/wiki-site.pl
+cgi-bin/wiklet-site.pl

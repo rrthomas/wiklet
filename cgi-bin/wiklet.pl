@@ -13,8 +13,8 @@ use Wiklet;
 
 # Root of Wiki relative to root of site
 $Wiklet::BaseUrl = "/~user/";
-# Relative URL of CGI script to run Wiki
-$Wiklet::ScriptUrl = "/cgi-bin/wiki.pl";
+# Relative URL of CGI script to run Wiklet
+$Wiklet::ScriptUrl = "/cgi-bin/wiklet.pl";
 # Uncomment next line if URL rewriting configured to map
 # ${BaseUrl}/Foo to ${ScriptUrl}?page=Foo
 #$Wiklet::PrettyUrls = 1;

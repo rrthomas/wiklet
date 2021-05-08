@@ -1,6 +1,6 @@
 # Wiklet Configuration
 
-[Wiklet] is configured in the `wiki.pl` script. The configuration variables are as follows:
+[Wiklet] is configured in the `wiklet.pl` script. The configuration variables are as follows:
 
 =`BaseUrl`=
     The base URL of the Wiki relative to the web site. It will typically contain a leading slash. It is used to construct relative URLs to make links within the Wiki. An absolute URL (excluding the initial `https:`) can be used if desired.
@@ -15,6 +15,6 @@
 =`Recent`=
     The number of days considered recent for the [Recent Changes] page.
 
-If you want to have more than one wiki, make a copy of `wiki.pl` under a different name for each Wiki and configure each copy appropriately.
+If you want to have more than one wiki, make a copy of `wiklet.pl` under a different name for each Wiki and configure each copy appropriately.
 
-You can improve Wiklet's performance by running it persistently. The recommended way to do this is to use [SpeedyCGI](http://www.daemoninc.com/SpeedyCGI/) (also called PersistentPerl). Having installed this, you need to use it to run `wiki.pl`; on many systems this is achieved by changing the first line of `wiki.pl` to use `speedy` instead of `perl`.
+You can improve Wiklet's performance by running it persistently. The recommended way to do this is to use [SpeedyCGI](http://www.daemoninc.com/SpeedyCGI/) (also called PersistentPerl). Having installed this, you need to use it to run `wiklet.pl`; on many systems this is achieved by changing the first line of `wiklet.pl` to use `speedy` instead of `perl`.
