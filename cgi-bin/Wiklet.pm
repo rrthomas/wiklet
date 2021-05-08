@@ -40,7 +40,7 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
    # Variables
    action => sub {$Action},
    template => sub {$Template},
-   text => sub {$Text},
+   text => sub {expand($Text, \%Macros)},
    scripturl => sub {$ScriptUrl},
    homepage => sub {$HomePage},
 
