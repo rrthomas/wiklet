@@ -174,7 +174,9 @@ sub renderMarkdown {
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
   # Render local links
-  $text =~ s|\[([^]]*)\]|a({-href => $BrowseUrl . escapePage($1)}, $1)|gsme;
+  $text =~ s|(?<!\\)\[([^]]*)\]|a({-href => $BrowseUrl . escapePage($1)}, $1)|gsme;
+  # Remove backslashes escaping square brackets
+  $text =~ s|\\\[|[|g;
   return expandNumericEntities($text);
 }
 
