@@ -4,6 +4,8 @@
 
   <head>
     <title>$homepage: Edit $pagename</title>
+    <link rel="stylesheet" href="$url{template/easymde.min.css}" type="text/css" />
+    <script src="$url{template/easymde.min.js}"></script>
     <link rel="stylesheet" href="$url{template/style.css}" type="text/css" />
   </head>
 
@@ -16,7 +18,7 @@ $include{nav.htm}
         <td valign="top">
           <form action="$scripturl" method="post">
             <h1>Edit <input type="text" size="40" name="pagename" value="$pagename" /></h1>
-            <p align="center">
+            <p>
               <textarea name="text" rows="20" cols="75" style="width: 100%">$TEXT</textarea><br />
               <input type="submit" value="Save" />
               <input type="hidden" name="action" value="save" />
@@ -30,6 +32,9 @@ $include{nav.htm}
         </td>
       </tr>
     </table>
+    <script>
+      var easyMDE = new EasyMDE();
+    </script>
   </body>
 
 </html>
