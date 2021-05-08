@@ -17,7 +17,7 @@ use Cwd qw(abs_path);
 
 use CGI ':standard';
 use CGI::Carp 'fatalsToBrowser';
-use Perl6::Slurp;
+use File::Slurp qw(slurp write_file);
 use File::Which;
 
 use RRT::Misc;
@@ -170,7 +170,7 @@ sub expandNumericEntities {
 sub renderMarkdown {
   my ($file) = @_;
   open(READER, "-|:utf8", "markdown", "-base", $BaseUrl, "-f", "autolink", $file);
-  my $text = scalar(slurp \*READER);
+  my $text = do {local $/ = undef; <READER>};
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
   # Render local links
@@ -204,7 +204,7 @@ sub readPage {
   my ($page) = @_;
   my $file = pageToFile($page);
   return "" unless -f $file;
-  return scalar(slurp '<:utf8', $file);
+  return scalar(slurp($file, {binmode => ':utf8'}));
 }
 
 sub getTemplateName {
@@ -215,7 +215,7 @@ sub getTemplateName {
 
 sub getTemplate {
   my ($file) = @_;
-  my $text = scalar(slurp '<:utf8', getTemplateName($file));
+  my $text = scalar(slurp(getTemplateName($file), {binmode => ':utf8'}));
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
   return expand(renderMarkdown("$TemplateDir/nofile.md"), \%Macros);
@@ -259,7 +259,6 @@ sub getHtml {
 sub checkInFile {
   my ($file, $text) = @_;
   my $new = ! -f $file;
-  use File::Slurp; # for write_file
   write_file($file, $text);
   system "cvs add -m \"Add file\" $file 2>/dev/null 1>&2"
     if $new;
@@ -283,7 +282,7 @@ sub movePage {
   my $file = pageToFile($page);
   if ($newPage ne "") {
     my $text = "";
-    $text = scalar(slurp '<:utf8', $file) if -f $file; # old page might not exist!
+    $text = scalar(slurp($file, {binmode => ':utf8'})) if -f $file; # old page might not exist!
     checkInFile($newFile, $text);
     $Macros{pagename} = sub {$newPage};
     checkInFile($file, expand(getTemplate("pagemoved.md"), \%Macros));
@@ -329,7 +328,7 @@ sub doRequest {
   $BrowseUrl = $PrettyUrls ? $BaseUrl : "$ScriptUrl?page=";
   $TextDir = "$DocumentRoot/text";
   $TemplateDir = "$DocumentRoot/template";
-  $CVSRoot = scalar(slurp '<:utf8', "$TextDir/CVS/Root");
+  $CVSRoot = scalar(slurp("$TextDir/CVS/Root", {binmode => ':utf8'}));
   chomp $CVSRoot;
   $ENV{CVSROOT} = $CVSRoot;
   $page ||= unescapePage(getParam("page"));
