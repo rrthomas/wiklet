@@ -10,13 +10,13 @@ use strict;
 use warnings;
 
 use Encode;
-use CGI ':standard';
-use CGI::Carp 'fatalsToBrowser';
 use File::Basename;
 use File::stat;
 use POSIX 'strftime';
 use Cwd qw(abs_path);
 
+use CGI ':standard';
+use CGI::Carp 'fatalsToBrowser';
 use Perl6::Slurp;
 use File::Which;
 
