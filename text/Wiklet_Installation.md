@@ -1,6 +1,6 @@
 # Wiklet Installation
 
-In order to run [Wiklet], you need access to a web server capable of running [Perl](https://www.perl.org) CGI scripts (Perl 5.003 or later), [CVS](https://www.nongnu.org/cvs), and [discount](https://www.pell.portland.or.us/~orc/Code/discount/). If you're not sure what some of that means, Wiklet is probably tricky for you to install (sorry!), and you should seek help (e.g. learn about web servers and CGI scripts, or ask the person who runs your web server for help).
+In order to run [Wiklet], you need access to a web server capable of running [Perl](https://www.perl.org) CGI scripts (Perl 5.10 or later), [CVS](https://www.nongnu.org/cvs), and [discount](https://www.pell.portland.or.us/~orc/Code/discount/). If you're not sure what some of that means, Wiklet is probably tricky for you to install (sorry!), and you should seek help (e.g. learn about web servers and CGI scripts, or ask the person who runs your web server for help).
 
 To install Wiklet:
 

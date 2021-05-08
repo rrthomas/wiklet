@@ -3,7 +3,7 @@
 # Distributed under the GNU General Public License version 3,
 # or, at your option, any later version.
 
-require 5.8.4;
+use v5.10;
 package Wiklet;
 
 use strict;
@@ -21,7 +21,7 @@ use File::Slurp qw(slurp write_file);
 use File::Which;
 
 use RRT::Misc;
-use RRT::Macro 3.10;
+use RRT::Macro 3.19;
 
 
 # Config vars
