@@ -346,8 +346,7 @@ sub doRequest {
   $page = $HomePage
     if !defined $page || $page eq "";
   $Macros{pagename} = sub {$page};
-  $Header = header(-type => "text/html; charset=utf-8",
-                   -expires => "now");
+  $Header = header(-type => "text/html; charset=utf-8", -expires => "now");
   $Action = getParam("action") || "view";
   abortScript($page, renderMarkdown(getTemplateName("noaction$pageSuffix")))
     unless $Actions{$Action};
