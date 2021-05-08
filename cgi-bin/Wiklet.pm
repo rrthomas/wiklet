@@ -71,15 +71,16 @@ use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
      push @depFiles, $TextDir; # invalidate cache when any page is changed
      my $now = time;
      my $limit = $now - ($now % 86400) - ($Recent * 86400);
-     my (%changes, $result);
+     my %changes;
      foreach (getIndex()) {
        my $time = pageMTime($_);
-       push @{$changes{$time - ($time % 86400)}}, "$_" if $time >= $limit;
+       push @{$changes{$time - ($time % 86400)}}, $_ if $time >= $limit;
      }
-     $result .= strftime("%d %B", localtime $_) . "\n---\n\n   *" .
-       (join "\n   *",
-        (map {" [" . unescapePage($_) . "]"} @{$changes{$_}})) . "\n\n"
-          foreach (sort {$b <=> $a} keys %changes);
+     my $result = "";
+     $result .= h2(strftime("%d %B", localtime $_)) .
+       ul(join "",
+          (map {li(localLink(unescapePage($_)))} @{$changes{$_}}))
+       foreach (sort {$b <=> $a} keys %changes);
      return "\n" . $result . "\n";
    },
 
@@ -166,15 +167,20 @@ sub expandNumericEntities {
   return $text;
 }
 
+sub localLink {
+  my ($page) = @_;
+  return a({-href => $BrowseUrl . escapePage($page)}, $page);
+}
+
 # Render Markdown to HTML
 sub renderMarkdown {
   my ($file) = @_;
-  open(READER, "-|:utf8", "markdown", "-base", $BaseUrl, "-f", "autolink", $file);
+  open(READER, "-|:utf8", "markdown", "-base", $BaseUrl, "-f", "autolink,fencedcode", $file);
   my $text = do {local $/ = undef; <READER>};
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;
   # Render local links
-  $text =~ s|(?<!\\)\[([^]]*)\]|a({-href => $BrowseUrl . escapePage($1)}, $1)|gsme;
+  $text =~ s|(?<!\\)\[([^]]*)\]|localLink($1)|gsme;
   # Remove backslashes escaping square brackets
   $text =~ s|\\\[|[|g;
   return expandNumericEntities($text);
@@ -183,9 +189,11 @@ sub renderMarkdown {
 
 # Reading and writing pages
 
+my $pageSuffix = ".md";
+
 sub pageToFile {
   my ($page) = @_;
-  my $file = "$TextDir/" . escapePage($page) . ".md";
+  my $file = "$TextDir/" . escapePage($page) . $pageSuffix;
   return $file;
 }
 
@@ -198,6 +206,7 @@ sub pageLocked {
 sub pageMTime {
   my ($page) = @_;
   my $file = pageToFile($page);
+  say STDERR "pageMTime of $page: $file";
   return 0 unless -f $file; # Ignore objects that aren't files
   return stat($file)->mtime || 0;
 }
@@ -220,7 +229,7 @@ sub getTemplate {
   my $text = scalar(slurp(getTemplateName($file), {binmode => ':utf8'}));
   return $text if defined $text;
   # Avoid infinite loop in getTemplate if file missing
-  return expand(renderMarkdown("$TemplateDir/nofile.md"), \%Macros);
+  return expand(renderMarkdown("$TemplateDir/nofile$pageSuffix"), \%Macros);
 }
 
 sub dirty {
@@ -232,7 +241,7 @@ sub dirty {
 }
 
 sub checkCVS {
-  abortScript("", expand(renderMarkdown(getTemplateName("nocvs.md")), \%Macros))
+  abortScript("", expand(renderMarkdown(getTemplateName("nocvs$pageSuffix")), \%Macros))
     if !which("cvs");
 }
 
@@ -279,7 +288,7 @@ sub writePage {
 sub movePage {
   my ($page, $newPage) = @_;
   my $newFile = pageToFile($newPage);
-  abortScript($newPage, renderMarkdown(getTemplateName("pageexists.md")))
+  abortScript($newPage, renderMarkdown(getTemplateName("pageexists$pageSuffix")))
     if -f $newFile;
   my $file = pageToFile($page);
   if ($newPage ne "") {
@@ -287,7 +296,7 @@ sub movePage {
     $text = scalar(slurp($file, {binmode => ':utf8'})) if -f $file; # old page might not exist!
     checkInFile($newFile, $text);
     $Macros{pagename} = sub {$newPage};
-    checkInFile($file, expand(getTemplate("pagemoved.md"), \%Macros));
+    checkInFile($file, expand(getTemplate("pagemoved$pageSuffix"), \%Macros));
   } else {                      # we are deleting the old page
     system "cvs rm -f $file 2>/dev/null 1>&2";
     system "cvs ci -m \"\" $file 2>/dev/null 1>&2";
@@ -299,6 +308,7 @@ sub getIndex {
   while (my $file = <$TextDir/*>) {
     my $page = unescapePage(basename(untaint($file)));
     # filter out directories (. .. and CVS)
+    $page =~ s/$pageSuffix$//;
     push @index, $page if -f $file;
   }
   return @index;
@@ -340,7 +350,7 @@ sub doRequest {
   $Header = header(-type => "text/html; charset=utf-8",
                    -expires => "now");
   $Action = getParam("action") || "view";
-  abortScript($page, renderMarkdown(getTemplateName("noaction.md")))
+  abortScript($page, renderMarkdown(getTemplateName("noaction$pageSuffix")))
     unless $Actions{$Action};
   checkMarkdown();
   checkCVS();
@@ -355,7 +365,7 @@ sub doRequest {
 
    edit => sub {
      my $tmpl = expandNumericEntities(getTemplate("edit.htm"));
-     abortScript($Macros{pagename}(), renderMarkdown(getTemplateName("readonly.md")))
+     abortScript($Macros{pagename}(), renderMarkdown(getTemplateName("readonly$pageSuffix")))
        if pageLocked($Macros{pagename}());
      my $text = readPage($Macros{pagename}());
      $text =~ s/&/&amp;/g;
