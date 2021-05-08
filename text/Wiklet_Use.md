@@ -1,7 +1,6 @@
 # Wiklet Use
 
 * Impatient readers should try [Quick Start].
-* If you get stuck then visit the [Wiklet FAQ].
 * For details of how to navigate Wiklet, see [Wiklet Navigation].
 * For how to write Wiki pages, see [Wiklet Text Formatting].
 * For installation instructions, see [Wiklet Installation]
