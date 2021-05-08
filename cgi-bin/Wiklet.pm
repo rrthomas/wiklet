@@ -206,7 +206,6 @@ sub pageLocked {
 sub pageMTime {
   my ($page) = @_;
   my $file = pageToFile($page);
-  say STDERR "pageMTime of $page: $file";
   return 0 unless -f $file; # Ignore objects that aren't files
   return stat($file)->mtime || 0;
 }
