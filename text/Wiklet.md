@@ -6,7 +6,7 @@ Wiklet is a simple [Wiki], a program that runs on a web server to provide a web 
 * [Download](Getting Wiklet)
 * [User instructions](Wiklet Use)
 * [Installation instructions](Wiklet Installation)
-* [Organisation of files and URLs](Wiklet Organisation)
+* [Organization of files and URLs](Wiklet Organization)
 * [Customization](Wiklet Customization)
 * [Licence](Wiklet Licence)
 * [Acknowledgements](Wiklet Acknowledgements)

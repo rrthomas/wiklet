@@ -8,7 +8,7 @@ prog = {
     "changes are general improvements and fixes, it seems sensible " ..
     "to make the distribution mostly from the live files, rather " ..
     "than try to keep default versions and separate out my " ..
-    "customisations."
+    "customizations."
 }
 
 
@@ -47,7 +47,7 @@ files = {
       "Wiklet_Actions", "Wiklet_CVS", "Wiklet_Configuration",
       "Wiklet_Customization", "Wiklet_FAQ", "Wiklet_Installation",
       "Wiklet_Licence", "Wiklet_Macros", "Wiklet_Navigation",
-      "Wiklet_Organisation", "Wiklet_Templates",
+      "Wiklet_Organization", "Wiklet_Templates",
       "Wiklet_Text_Formatting", "Wiklet_ToDo", "Wiklet_Use",
       "Wiklet_Version",
       {progdir .. "/" .. "Licence", "Licence"},

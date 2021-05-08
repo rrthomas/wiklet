@@ -9,4 +9,4 @@ To install Wiklet:
 3. Configure the `wiklet.pl` script as described in [Wiklet Configuration].
 4. The Wiki should now be ready to use. See [Wiklet Customization] for details of the various ways in which [Wiklet] can be customized.
 
-See [Wiklet Organisation] for more details of the layout of the files and URLs used by Wiklet.
+See [Wiklet Organization] for more details of the layout of the files and URLs used by Wiklet.

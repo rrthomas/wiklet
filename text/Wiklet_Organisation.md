@@ -1,4 +1,4 @@
-# Wiklet Organisation
+# Wiklet Organization
 
 ## Distribution
 
