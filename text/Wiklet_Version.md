@@ -1,3 +1,0 @@
-# Wiklet Version
-
-25

@@ -1,6 +1,7 @@
-#! /bin/bash
+#!/bin/bash
 # mkdist for Wiklet
-dist=wiklet-25.tar
+version=$(cat ./template/version.txt)
+dist=wiklet-$version.tar
 tar --create --file $dist --exclude=CVS --exclude=RRT --exclude=".*" --wildcards --dereference cgi-bin README.md template text
 tar --append --file $dist --exclude=CVS --exclude=".*" --wildcards --dereference cgi-bin/RRT/{Macro,Misc}.pm
 chmod 644 $dist
