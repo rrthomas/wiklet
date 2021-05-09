@@ -334,7 +334,7 @@ sub getParam {
 
 sub doRequest {
   my ($page) = @_;
-  binmode(STDOUT, ":raw"); # FIXME: This is a kludge to make UTF-8 output work
+  binmode(STDOUT, ":utf8");
   $BrowseUrl = $PrettyUrls ? $BaseUrl : "$ScriptUrl?page=";
   $TextDir = "$DocumentRoot/text";
   chdir $TextDir;
