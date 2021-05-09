@@ -269,9 +269,9 @@ sub checkInFile {
   my ($file, $text) = @_;
   my $new = ! -f $file;
   write_file($file, $text);
-  system "git add $file"
+  system {"git"} "git", "add", $file
     if $new;
-  system "git commit --quiet --message=\"Update $file\" $file";
+  system {"git"} "git", "commit", "--quiet", "--message=\"Update $file\"", $file;
 }
 
 sub writePage {
@@ -296,8 +296,8 @@ sub movePage {
     $Macros{pagename} = sub {$newPage};
     checkInFile($file, expand(getTemplate("pagemoved$pageSuffix"), \%Macros));
   } else {                      # we are deleting the old page
-    system "git rm -f $file";
-    system "git commit --quiet --message=\"Delete $file\" $file";
+    system {"git"} "git", "rm", "-f", $file;
+    system {"git"} "git", "commit", "--quiet", "--message=\"Delete $file\"", $file;
   }
 }
 
