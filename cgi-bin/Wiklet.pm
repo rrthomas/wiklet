@@ -13,7 +13,6 @@ use Encode;
 use File::Basename;
 use File::stat;
 use POSIX 'strftime';
-use Cwd qw(abs_path);
 
 use CGI ':standard';
 use CGI::Carp 'fatalsToBrowser';
@@ -25,12 +24,12 @@ use RRT::Macro 3.19;
 
 
 # Config vars
-use vars qw($BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot
-            $Recent %Macros %Actions);
+use vars qw($BaseUrl $ScriptUrl $PrettyUrls $HomePage $DocumentRoot $Recent
+            %Macros %Actions);
 
 # Computed globals
-use vars qw($BrowseUrl $TextDir $TemplateDir $CVSRoot $Header
-            $Action $Template $Text %Cache);
+use vars qw($BrowseUrl $TextDir $TemplateDir $Header $Action $Template $Text
+            %Cache);
 
 
 # Macros
@@ -239,9 +238,9 @@ sub dirty {
   return 0;
 }
 
-sub checkCVS {
-  abortScript("", expand(renderMarkdown(getTemplateName("nocvs$pageSuffix")), \%Macros))
-    if !which("cvs");
+sub checkGit {
+  abortScript("", expand(renderMarkdown(getTemplateName("nogit$pageSuffix")), \%Macros))
+    if !which("git");
 }
 
 sub checkMarkdown {
@@ -270,9 +269,9 @@ sub checkInFile {
   my ($file, $text) = @_;
   my $new = ! -f $file;
   write_file($file, $text);
-  system "cvs add -m \"Add file\" $file 2>/dev/null 1>&2"
+  system "git add $file"
     if $new;
-  system "cvs ci -m \"\" $file 2>/dev/null 1>&2";
+  system "git commit --quiet --message=\"Update $file\" $file";
 }
 
 sub writePage {
@@ -297,8 +296,8 @@ sub movePage {
     $Macros{pagename} = sub {$newPage};
     checkInFile($file, expand(getTemplate("pagemoved$pageSuffix"), \%Macros));
   } else {                      # we are deleting the old page
-    system "cvs rm -f $file 2>/dev/null 1>&2";
-    system "cvs ci -m \"\" $file 2>/dev/null 1>&2";
+    system "git rm -f $file";
+    system "git commit --quiet --message=\"Delete $file\" $file";
   }
 }
 
@@ -306,7 +305,7 @@ sub getIndex {
   my @index;
   while (my $file = <$TextDir/*>) {
     my $page = unescapePage(basename(untaint($file)));
-    # filter out directories (. .. and CVS)
+    # filter out directories (. .. and .git)
     $page =~ s/$pageSuffix$//;
     push @index, $page if -f $file;
   }
@@ -338,10 +337,8 @@ sub doRequest {
   binmode(STDOUT, ":raw"); # FIXME: This is a kludge to make UTF-8 output work
   $BrowseUrl = $PrettyUrls ? $BaseUrl : "$ScriptUrl?page=";
   $TextDir = "$DocumentRoot/text";
+  chdir $TextDir;
   $TemplateDir = "$DocumentRoot/template";
-  $CVSRoot = scalar(slurp("$TextDir/CVS/Root", {binmode => ':utf8'}));
-  chomp $CVSRoot;
-  $ENV{CVSROOT} = $CVSRoot;
   $page ||= unescapePage(getParam("page"));
   $page = $HomePage
     if !defined $page || $page eq "";
@@ -351,7 +348,7 @@ sub doRequest {
   abortScript($page, renderMarkdown(getTemplateName("noaction$pageSuffix")))
     unless $Actions{$Action};
   checkMarkdown();
-  checkCVS();
+  checkGit();
   print $Header . $Actions{$Action}();
 }
 

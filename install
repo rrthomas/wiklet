@@ -1,13 +1,12 @@
 #!/bin/sh
 
-if [ $# -ne 3 ]; then
-    echo Usage: $0 CGI-BIN DOCUMENT-ROOT CVSROOT
+if [ $# -ne 2 ]; then
+    echo Usage: $0 CGI-BIN DOCUMENT-ROOT
     exit 1
 fi
 
 CGI_BIN="$1"
 DOCUMENT_ROOT=$(realpath $2)
-export CVSROOT=$(realpath $3)
 
 # Copy program files into CGI bin directory
 cp -r cgi-bin/* "$CGI_BIN"
@@ -19,13 +18,11 @@ cp -a text template "$DOCUMENT_ROOT"
 mkdir "$DOCUMENT_ROOT"/download "$DOCUMENT_ROOT"/image
 chmod -R +w "$DOCUMENT_ROOT"/text/*
 
-# Create a new CVS repository.
-cvs init
-cd text
-cvs import -m "Wiklet setup" www wiki start
-rm *.md
-cvs co -d . www
-chmod -R +w "$CVSROOT"/*
+# Create a new git repository
+cd "$DOCUMENT_ROOT"/text
+git init .
+git add *
+git commit -m "Initial commit"
 
 echo
 echo "Now see the installation instructions or '$CGI_BIN/wiklet.pl' for further setup"

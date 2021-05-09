@@ -7,5 +7,5 @@ Wiklet can be customized in a number of ways:
 * [Wiklet Templates] discusses templates, which are used to generate HTML pages, and can be used as `\$include` files.
 * [Wiklet Macros] can be added or modified.
 * If you want to add new features to Wiklet, you'll probably want to extend the [Wiklet Actions].
-* [Wiklet CVS] covers configuration of CVS, including making pages read-only and being notified of changes.
-* [Wiklet Security] discusses how to password-protect wiki content and Wiklet functions.
+* [Wiklet Git] covers configuration of Git, including editing read-only pages and being notified of changes.
+* [Wiklet Security] discusses how to make pages read-only, and password-protect wiki content and Wiklet functions.

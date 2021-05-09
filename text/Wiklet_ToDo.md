@@ -2,7 +2,7 @@
 
 This list reflects the [author](https://rrt.sc3d.org)'s priorities. If you'd like to help, or you have any other changes you'd like to see, please [contact me](mailto:rrt@sc3d.org).
 
-   * Merge into DarkGlass by making editing/CVS a DarkGlass plugin.
+   * Merge into DarkGlass by making editing/Git a DarkGlass plugin.
    * Add macros equivalent to all markup.
    * Add web interface for rollback, configuration and management (e.g. restart). This needs authentication.
    * Support more document types.

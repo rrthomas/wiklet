@@ -3,7 +3,7 @@
 version=$(cat ./template/version.txt)
 dist=wiklet-$version.tar
 tar_common_opts="--file $dist --transform s,^,wiklet-$version/,"
-tar --create $tar_common_opts --exclude=CVS --exclude=RRT --exclude=".*" --exclude=wiklet-site.pl --wildcards --dereference cgi-bin README.md template text install
+tar --create $tar_common_opts --exclude=.git --exclude=RRT --exclude=".*" --exclude=wiklet-site.pl --wildcards --dereference cgi-bin README.md template text install
 tar --append $tar_common_opts cgi-bin/RRT/{Macro,Misc}.pm
 chmod 644 $dist
 gzip -f $dist
