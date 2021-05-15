@@ -2,9 +2,15 @@
 # mkdist for Wiklet
 version=$(cat ./template/version.txt)
 dist=wiklet-$version.tar
-tar_common_opts="--file $dist --transform s,^,wiklet-$version/,"
-tar --create $tar_common_opts --exclude=.git --exclude=RRT --exclude=".*" --exclude=wiklet-site.pl --wildcards --dereference cgi-bin README.md template text install
-tar --append $tar_common_opts cgi-bin/RRT/{Macro,Misc}.pm
+tar_common_opts="--file $dist --transform s,^dist/,wiklet-$version/,"
+DIST_FILES=(cgi-bin README.md template text install)
+rm -rf dist
+mkdir dist
+umask 0
+cp -r ${DIST_FILES[@]} dist/
+chmod -R +rX dist/
+tar --create $tar_common_opts --exclude=.git --exclude=RRT/[PR]* --exclude=RRT/ --exclude=".*" --exclude=wiklet-site.pl --wildcards --dereference dist/
 chmod 644 $dist
 gzip -f $dist
 mv $dist.gz download/
+rm -rf dist
