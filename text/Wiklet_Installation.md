@@ -6,6 +6,7 @@ To install Wiklet:
 
 1. Unpack the [distribution archive](Getting Wiklet).
 2. In the directory, run `./install CGI-BIN DOCUMENT-ROOT`, where `CGI-BIN` is the path to the web server’s CGI bin directory, `DOCUMENT-ROOT` is where the wiki files will be stored.
+3. Ensure that the directory `DOCUMENT-ROOT/text` and its contents is owned by the user as which the web server runs, and that the contents is readable and writable by that user.
 3. Configure the `wiklet.pl` script as described in [Wiklet Configuration].
 4. The Wiki should now be ready to use. See [Wiklet Customization] for details of the various ways in which [Wiklet] can be customized.
 
