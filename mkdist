@@ -2,7 +2,7 @@
 # mkdist for Wiklet
 version=$(cat ./template/version.txt)
 dist=wiklet-$version.tar
-tar_common_opts="--file $dist --transform s,^dist/,wiklet-$version/,"
+tar_common_opts="--file $dist --transform s,^dist,wiklet-$version,"
 DIST_FILES=(cgi-bin README.md template text install)
 rm -rf dist
 mkdir dist
