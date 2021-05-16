@@ -267,11 +267,11 @@ sub getHtml {
 
 sub checkInFile {
   my ($file, $text) = @_;
-  my $new = ! -f $file;
+  my $new = ! -e $file;
+  $file = untaint(readlink($file)) if -l $file;
   write_file($file, $text);
-  system {"git"} "git", "add", $file
-    if $new;
-  system {"git"} "git", "commit", "--quiet", "--message=\"Update $file\"", $file;
+  system {"git"} "git", "add", $file if $new;
+  system {"git"} "git", "commit", "--quiet", "--message=Update $file", $file;
 }
 
 sub writePage {
