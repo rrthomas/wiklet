@@ -1,4 +1,4 @@
-# Wiklet (c) 2002-2021 Reuben Thomas (rrt@sc3d.org)
+# Wiklet (c) 2002-2025 Reuben Thomas (rrt@sc3d.org)
 # https://rrt.sc3d.org/Software/Wiklet
 # Distributed under the GNU General Public License version 3,
 # or, at your option, any later version.
@@ -18,6 +18,7 @@ use CGI ':standard';
 use CGI::Carp 'fatalsToBrowser';
 use File::Slurp qw(slurp write_file);
 use File::Which;
+use IPC::Run3;
 
 use RRT::Misc;
 use RRT::Macro 3.19;
@@ -270,8 +271,8 @@ sub checkInFile {
   my $new = ! -e $file;
   $file = untaint(readlink($file)) if -l $file;
   write_file($file, $text);
-  system {"git"} "git", "add", $file if $new;
-  system {"git"} "git", "commit", "--quiet", "--message=Update $file", $file;
+  run3 ["git", "add", $file], \undef, \undef, \undef if $new;
+  run3 ["git", "commit", "--quiet", "--message=Update $file", $file], \undef, \undef, \undef;
 }
 
 sub writePage {
@@ -296,8 +297,8 @@ sub movePage {
     $Macros{pagename} = sub {$newPage};
     checkInFile($file, expand(getTemplate("pagemoved$pageSuffix"), \%Macros));
   } else {                      # we are deleting the old page
-    system {"git"} "git", "rm", "-f", $file;
-    system {"git"} "git", "commit", "--quiet", "--message=\"Delete $file\"", $file;
+    run3 ["git", "rm", "-f", $file], \undef, \undef, \undef;
+    run3 ["git", "commit", "--quiet", "--message=\"Delete $file\"", $file], \undef, \undef, \undef;
   }
 }
 
