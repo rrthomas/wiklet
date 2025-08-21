@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
 
 if [ $# -ne 2 ]; then
     echo Usage: $0 CGI-BIN DOCUMENT-ROOT
@@ -7,6 +9,10 @@ fi
 
 CGI_BIN="$1"
 DOCUMENT_ROOT=$(realpath $2)
+if ! test -d "$DOCUMENT_ROOT"; then
+    echo "DOCUMENT_ROOT $DOCUMENT_ROOT does not exist"
+    exit 1
+fi
 
 # Copy program files into CGI bin directory
 cp -r cgi-bin/* "$CGI_BIN"
