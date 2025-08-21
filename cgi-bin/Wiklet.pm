@@ -175,7 +175,7 @@ sub localLink {
 # Render Markdown to HTML
 sub renderMarkdown {
   my ($file) = @_;
-  open(READER, "-|:utf8", "markdown", "-base", $BaseUrl, "-f", "autolink,fencedcode", $file);
+  open(READER, "-|:utf8", "markdown", "-base", $BaseUrl, "-f", "autolink,fencedcode", @Wiklet::DiscountOptions, $file);
   my $text = do {local $/ = undef; <READER>};
   # Pull out the body element of the HTML
   $text =~ m|<body[^>]*>(.*)</body>|gsmi;

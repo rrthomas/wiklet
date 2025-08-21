@@ -1,5 +1,5 @@
-#! /usr/bin/perl -Tw
-# Wiklet (c) 2002-2007 Reuben Thomas (rrt@sc3d.org; http://rrt.sc3d.org)
+#!/usr/bin/perl -Tw
+# Wiklet (c) 2002-2025 Reuben Thomas (rrt@sc3d.org; http://rrt.sc3d.org)
 # Distributed under the GNU General Public License
 
 $ENV{PATH}  = '/bin:/usr/bin';
@@ -24,6 +24,8 @@ $Wiklet::HomePage = "Home Page";
 $Wiklet::DocumentRoot = "/home/user/public_html";
 # Number of days back to go for recent changes
 $Wiklet::Recent = "14";
+# Discount options
+@Wiklet::DiscountOptions = ();
 
 # Extra macros
 # $Wiklet::Macros{email} = sub {
