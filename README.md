@@ -1,6 +1,6 @@
 # Wiklet
 
-© Reuben Thomas 2002-2025
+© Reuben Thomas 2002–2025
 
 Wiklet is a simple Wiki, a program that runs on a web server to provide a web site that can be edited from within a web browser. The overall look of the site is controlled by HTML templates; pages in the site can be created and edited by clicking on the edit link that appears on each page.
 
