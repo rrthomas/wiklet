@@ -1,5 +1,8 @@
 #!/bin/bash
 # mkdist for Wiklet
+
+set -e
+
 version=$(cat ./template/version.txt)
 dist=wiklet-$version.tar
 tar_common_opts="--file $dist --transform s,^dist,wiklet-$version,"
