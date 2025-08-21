@@ -7,4 +7,4 @@ Wiklet is a simple Wiki, a program that runs on a web server to provide a web si
 Wiklet is distributed under the GNU General Public License version 3, or, at your option, any later version.
 
 To report bugs or contribute to the project, see
-https://github.com/rrthomas/wiklet
+<https://github.com/rrthomas/wiklet>
